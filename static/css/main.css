@@ -1,0 +1,224 @@
+@import url('https://fonts.googleapis.com/css?family=Poppins:700|Poppins:400');
+:root {
+  --title: #f5f5ff;
+  --text: #dbdbe6;
+  --background: #121118;
+  --primary: #6356c8;
+  --secondary: #7b71cc;
+  --secondary2: #161521;
+  --secondary3: #201e31;
+  --secondary4: #322E4F; /*bouton2 */
+  --accent: #513ac5;
+  --idkgraph: #312f42;
+  --select-border: var(--secondary4);
+  --select-focus: rgb(50, 50, 105);
+  --select-arrow: var(--select-border);
+  --red: #FFBFBF;
+}
+
+body {
+  font-family: 'Poppins';
+  font-weight: 400;
+  color: var(--text);
+  background-color: var(--background);
+  margin-left: 10%;
+  margin-right: 10%;
+}
+
+
+html {font-size: 100%;}
+
+h1{
+  font-size: 50px;
+  color: var(--title);
+  }
+
+h2 {
+  font-size: 30px;
+  color: var(--title);
+}
+
+h3 {
+  font-size: 25px;
+  color: var(--title);
+}
+
+h4 {
+  font-size: 20px;
+  color: var(--title);
+}
+
+h5 {
+  font-size: 15px;
+  color: var(--title);
+}
+
+
+#presentation {
+  background-color: var(--secondary3);
+}
+
+#results {
+  background-color: #b4aac9;
+  width: 80%;
+}
+
+.r {
+  color: #000000;
+}
+.maindivs {
+  background-color: var(--secondary2);
+  border-radius: 30px;
+  padding: 30px;
+  width: 90%;
+  max-width: 1200px;
+  margin: auto;
+  text-align: center;
+  
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+select {
+  appearance: none;
+  background-color: transparent;
+  border: none;
+  padding: 0 1em 0 0;
+  margin: 0;
+  font-family: 'Segoe UI';
+
+  width: 100%;
+  min-width: 15ch;
+  max-width: 30ch;
+  border: 1px solid var(--select-border);
+  border-radius: 0.25em;
+  padding: 0.25em 0.5em;
+  font-size: 1.25rem;
+  cursor: pointer;
+  line-height: 1.1;
+  background-color: var(--secondary2);
+  color: var(--text);
+}
+
+
+.important {
+  color: var(--red)
+}
+
+.generateButton {
+  border-radius: 10px;
+  cursor: pointer;
+  align-self: center;
+  font-size: 17px;
+  padding: 15px;
+  text-align: center;
+  transition-duration: 0.2s;
+  margin: 0;
+  user-select: none;
+  color: var(--text);
+  background-color: var(--primary);
+  display: flex;
+  flex-direction: row;
+  justify-content: left;
+  gap: 2em;
+  margin: 50px 5% 30px 10%;
+  border: 0;
+  font-family: 'Poppins';
+  width: 65px;
+}
+
+.generateButton:hover {
+  transform: translate(0, -3px);
+  box-shadow: 0 20px 80px -10px var(--primary);
+}
+
+.hint {
+  background-color: var(--secondary3);
+}
+
+.targetsimg {
+  width: 80%;
+  height: 100%;
+  color: rgb(255, 255, 255);
+  border-radius: 30px;
+  overflow: hidden;
+}
+
+.dl {
+  box-sizing: border-box;
+  appearance: none;
+  background-color: transparent;
+  border: 2px solid var(--secondary2);
+  border-radius: 30px;
+  color: var(--secondary2);
+  cursor: pointer;
+  display: flex;
+  align-self: center;
+  font-size: 17px;
+  padding: 17px;
+  text-decoration: none;
+  text-align: center;
+  font-weight: 700;
+  transition-property: color,background-color;
+  transition-duration: 0.2s;
+  font-family: Segoe UI Semibold;
+  display: inline-block;
+  margin: 20px;
+  width: 100%;
+  max-width: 300px;
+}
+
+.dl:hover {
+  border: 2px solid var(--secondary4);
+  color:var(--text);
+  background-color: var(--secondary4);
+}
+
+.flexThing {
+  padding: auto;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+}
+
+.paratable {
+  margin: auto;
+}
+
+.buttons {
+  flex-direction: column;
+  justify-content: center;
+  display: flex;
+  user-select: none;
+}
+
+
+@media screen and (max-width: 768px) {
+  body {
+    margin: 0;
+  }
+  html {
+    font-size: 95%;
+  }
+  h1 {
+    text-align: center;
+  }
+  h2 {
+    font-size: 20px;
+  }
+  .maindivs {
+    padding: 20px;
+    width: 94%;
+  }
+  .flexThing {
+  flex-direction: column;
+  justify-content: space-between;
+  }
+  .dl {
+  margin-bottom: 0;
+  }
+}

@@ -1,0 +1,123 @@
+{% extends 'base.html' %}
+{% block head%}{% endblock %}
+
+{% block body%}
+
+<div class="tout">
+    <h1>Shewi!</h1>
+    <div id="presentation" class="maindivs">
+        <h2>- Instant EQ your earphones ! mafaka -</h2>
+        <p>EQ is the easiest way to improve sound quality of your audio device, but doing it right isn't easy to do. So
+            with this website, you will be able to EQ your audio device to a neutral
+            target effortlessly :D
+        </p>
+        <p class="important">Important, this EQ should be used as a baseline, don't hesitate to custom it to
+            your
+            liking afterwards !</p>
+        <div style="padding-top: 10px;"></div>
+        <p style="font-family: Segoe UI Bold;font-size: large;"> (*≧︶≦))(￣▽￣* )ゞ</p>
+        <div style="padding-top: 10px;"></div>
+        <h4>Why are you creating that website ? AutoEQ exists lmao</h4>
+        <div style="text-align: left;">
+            <p>tl;dr, AutoEQ is outdated and is especially bad for in-ear audio devices (in my
+                opinion). Their EQ profiles are based on old
+                measurement rigs with non human-like ear-canals, and you can only EQ your in-ear devices to the Harman
+                IE
+                target. This target has
+                arguably some issues in the research behind it, and can subjectively sound "shouty" due to its very high
+                ear-gain
+                level.
+            </p>
+            <p>
+                Here, all EQ profiles are based on the B&K 5128, the most accurate measurment rig available today,
+                and have been created using more relevant targets such as JM-1 or SoundGuys' target.
+                The EQ results should be much more
+                enjoyable and "neutral" than autoEQ's
+            </p>
+        </div>
+    </div>
+    <div style="padding-top: 20px;"></div>
+    <p style="text-align: center;">Visualizations will be available soon™.</p>
+    {% if result != None %}
+    <div id="results" class="maindivs">
+        <h3 class="r">- Results -</h3>
+        <p class="r">EQ {{ iem }} -> {{ target }}</p>
+        <div class="flexThing">
+            <div class="paraEQ">
+                <table class="r paratable">
+                    <tr>
+                        <th>Filter</th>
+                        <th>Frequency</th>
+                        <th>Gain</th>
+                        <th>Q Value</th>
+                    </tr>
+                    {% for keys in paraEQ %}
+                    <tr>
+                        <th>{{ keys }}</th>
+                        <th>{{ paraEQ[keys][0] }}</th>
+                        <th>{{ paraEQ[keys][1] }}</th>
+                        <th>{{ paraEQ[keys][2] }}</th>
+                    </tr>
+                    {% endfor %}
+                </table>
+            </div>
+            <div class="buttons">
+                <a href="{{url_for('wavelet')}}" download='test' class=" dl">Export to Wavelet</a>
+                <a href="{{url_for('poweramp')}}" download='test' class="dl">Export to Poweramp</a>
+                <a href="{{url_for('parametric')}}" download='test' class="dl">Download Parametric EQ</a>
+                <a onclick="iircopy()" class="dl" id="iir" data-iir="{{ iir }}">Copy IIR string</a>
+            </div>
+        </div>
+        <div style="padding-top: 40px;"></div>
+    </div>
+    {% endif %}
+</div>
+<div style="padding-top: 50px;"></div>
+<div class="maindivs EQdiv">
+    <h3>- Try it ! -</h3>
+    <p>Note: Some headphones are available, but I don't recommend EQing them over 10kHz due to position variation.
+    </p>
+    <form method="POST" action="{{ url_for('results') }}">
+        <select name="select1" id="IEM">
+            <option> Choose your device </option>
+            {% for iem in FRList %}
+            <option> {{ iem }} </option>
+            {% endfor %}
+        </select>
+        <h4>EQ to..</h4>
+        <select name="select2" id="target">
+            <option> Choose a target </option>
+            {% for target in targetList %}
+            <option> {{ target }} </option>
+            {% endfor %}
+        </select>
+        <button type="submit" class="generateButton">Go !</button>
+    </form>
+    <div class='maindivs hint' style="text-align: left;">
+        <h4 style="margin: 0;">Hint:</h4>
+        <p><strong>SoundGuys Target</strong>: Nice balance between neutral and fun (recommended)</p>
+        <p><strong>Shewi Target</strong>: U-Shaped Target focused on macro-dynamics and immersiveness. My go-to
+            sound profile
+        </p>
+        <p><strong>5128 DF</strong>: Neutral for Headphones</p>
+        <p><strong>JM-1</strong>: Neutral for IEMs</p>
+        <p><strong>Harman Beta (2024)</strong>: If you want a sound similar to AutoEQ but more precise</p>
+        <p>Tilt: The more the tilt is important, the more it will sound 'dark'. If you prefer a brighter sound, choose
+            -0.8dB/oct.</p>
+    </div>
+    <div style="padding-top: 50px;"></div>
+    <div>
+        <img class='targetsimg' src="../static/img/Targets.png">
+    </div>
+</div>
+<div style="padding-top: 250px;"></div>
+<p style="text-align: center;color: var(--secondary3);font-family: Segoe UI Bold;font-weight: bold;">
+    かえるぴょこぴょこみぴょこぴょこ
+    (/・ω・)/</p>
+<script>
+    function iircopy() {
+        var copyText = document.getElementById('iir').dataset.iir
+        navigator.clipboard.writeText(copyText);
+    }
+</script>
+{% endblock %}

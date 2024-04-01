@@ -1,0 +1,1 @@
+iir:type=peak;f=25;g=2.7;q=0.500,iir:type=peak;f=570;g=3.0;q=0.700,iir:type=peak;f=1700;g=-4.9;q=1.600,iir:type=peak;f=4300;g=4.7;q=3.300,iir:type=peak;f=4800;g=-1.4;q=1.700,iir:type=peak;f=6100;g=-5.3;q=3.400,iir:type=peak;f=7300;g=-5.0;q=2.600,iir:type=peak;f=16000;g=16.0;q=0.600,
