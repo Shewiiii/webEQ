@@ -17,62 +17,48 @@
         <div style="padding-top: 10px;"></div>
         <p style="font-family: Segoe UI Bold;font-size: large;"> (*≧︶≦))(￣▽￣* )ゞ</p>
         <div style="padding-top: 10px;"></div>
-        <h4>Why are you creating that website ? AutoEQ exists lmao</h4>
-        <div style="text-align: left;">
-            <p>AutoEQ is a wonderful project, and you should use it instead of this website if your device is available
-                on it <strong>with B&K 5128 measurements</strong> (which is probably not the case). If it's not,
-                your EQ will probably be
-                inaccurate, especially for in-ear devices, because of the inaccurate acoustic input impedence other
-                measurement rigs have.</p>
-            <p> Here, all EQ profiles are based on the B&K 5128, the most
-                accurate measurement rig available today,
-                and have been created using relevant targets such as JM-1 or SoundGuys' target.
-                The EQ results should be much more
-                enjoyable and "neutral" than autoEQ's by default.
-            </p>
+    </div>
+</div>
+<div style="padding-top: 20px;"></div>
+<p style="text-align: center;">Visualizations will be available soon™.</p>
+{% if result != None %}
+<div style="padding-top: 20px;"></div>
+<div id="results" class="maindivs">
+    <h3 class="r">- Results -</h3>
+    <p class="r">EQ {{ iem }} -> {{ target }}</p>
+    <div class="flexThing">
+        <div class="paraEQ">
+            <table class="r paratable">
+                <tr>
+                    <th>Filter</th>
+                    <th>Frequency</th>
+                    <th>Gain</th>
+                    <th>Q Value</th>
+                </tr>
+                {% for keys in paraEQ %}
+                <tr>
+                    <th>{{ keys }}</th>
+                    <th>{{ paraEQ[keys][0] }}</th>
+                    <th>{{ paraEQ[keys][1] }}</th>
+                    <th>{{ paraEQ[keys][2] }}</th>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+        <div class="buttons">
+            <a href="{{url_for('wavelet')}}" download='test' class=" dl">Export to Wavelet</a>
+            <a href="{{url_for('poweramp')}}" download='test' class="dl">Export to Poweramp</a>
+            <a href="{{url_for('parametric')}}" download='test' class="dl">Download Parametric EQ</a>
+            <a onclick="iircopy()" class="dl" id="iir" data-iir="{{ iir }}">Copy IIR string</a>
         </div>
     </div>
-    <div style="padding-top: 20px;"></div>
-    <p style="text-align: center;">Visualizations will be available soon™.</p>
-    {% if result != None %}
-    <div id="results" class="maindivs">
-        <h3 class="r">- Results -</h3>
-        <p class="r">EQ {{ iem }} -> {{ target }}</p>
-        <div class="flexThing">
-            <div class="paraEQ">
-                <table class="r paratable">
-                    <tr>
-                        <th>Filter</th>
-                        <th>Frequency</th>
-                        <th>Gain</th>
-                        <th>Q Value</th>
-                    </tr>
-                    {% for keys in paraEQ %}
-                    <tr>
-                        <th>{{ keys }}</th>
-                        <th>{{ paraEQ[keys][0] }}</th>
-                        <th>{{ paraEQ[keys][1] }}</th>
-                        <th>{{ paraEQ[keys][2] }}</th>
-                    </tr>
-                    {% endfor %}
-                </table>
-            </div>
-            <div class="buttons">
-                <a href="{{url_for('wavelet')}}" download='test' class=" dl">Export to Wavelet</a>
-                <a href="{{url_for('poweramp')}}" download='test' class="dl">Export to Poweramp</a>
-                <a href="{{url_for('parametric')}}" download='test' class="dl">Download Parametric EQ</a>
-                <a onclick="iircopy()" class="dl" id="iir" data-iir="{{ iir }}">Copy IIR string</a>
-            </div>
-        </div>
-        <div style="padding-top: 40px;"></div>
-    </div>
-    {% endif %}
+    <div style="padding-top: 40px;"></div>
+</div>
+{% endif %}
 </div>
 <div style="padding-top: 50px;"></div>
 <div class="maindivs EQdiv">
     <h3>- Try it ! -</h3>
-    <p>Note: Some headphones are available, but I don't recommend EQing them over 10kHz due to position variation.
-    </p>
     <form method="POST" action="{{ url_for('results') }}">
         <select name="select1" id="IEM">
             <option> Choose your device </option>
@@ -104,6 +90,43 @@
     <div style="padding-top: 50px;"></div>
     <div>
         <img class='targetsimg' src="../static/img/Targets.png">
+    </div>
+</div>
+<div style="padding-top: 50px;"></div>
+<div class="maindivs infos">
+    <h3>- Random infos -</h3>
+    <div style="text-align: left;">
+        <h4>Yes autoEQ exists, and it's great, but</h4>
+        <p>You should use it instead of this website if your device is available
+            on it <strong>with B&K 5128 measurements</strong> (which is probably not the case). If it's not,
+            your EQ will probably be
+            inaccurate, especially for in-ear devices, because of the inaccurate acoustic input impedence other
+            measurement rigs have.</p>
+        <p> Here, all EQ profiles are based on the B&K 5128, the most
+            accurate measurement rig available today,
+            and have been created using relevant targets such as JM-1 or SoundGuys' target.
+            The EQ results should be much more
+            enjoyable and "neutral" than autoEQ's by default.
+        </p>
+        <h4>Why I'm doing this</h4>
+        <p>Because I'm using it personally and because it's fun to do @w@</p>
+        <h4>Specs of the EQ</h4>
+        <p>I'm trying to EQ up to 20khz, since the 5128 is accurate enough to allow EQing the full audible
+            range.<br><strong>However</strong>, you should note that all our ears are different, thus the frequency
+            response
+            you will actually hear will be significantly different from the one measured on the 5128. That's why you
+            HAVE to
+            EQ by ear as well if you think something is wrong.</strong></p>
+        <p>
+            On headphones especially, frequency response changes a lot depending on position. This is something you
+            should take into consideration when EQing but also in general when you look at a frequency response graph.
+        </p>
+        <h4>The resonance frequency EQed</h4>
+        <p>This is a problem trying to solve. Basically, your earphones (or headphones) can interact strongly at a
+            certain frequency,
+            known as the resonance frequency. This results in a dip in the measured frequency response. This phenomenon,
+            although it also occurs in the human ear, does not necessarily occur at the same frequency or amplitude.
+            Equalizing this region could therefore cause inaccuracies.</p>
     </div>
 </div>
 <div style="padding-top: 250px;"></div>
