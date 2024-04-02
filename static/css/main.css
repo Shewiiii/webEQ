@@ -7,15 +7,14 @@
   --secondary: #7b71cc;
   --secondary2: #161521;
   --secondary3: #2d2b41;
-  --pres: #2a2846;
   --secondary4: #322E4F; /*bouton2 */
   --accent: #513ac5;
   --idkgraph: #312f42;
   --select-border: var(--secondary4);
-  --select-focus: rgb(50, 50, 105);
+  --select-focus: rgb(54, 50, 105);
   --select-arrow: var(--select-border);
   --red: #FFBFBF;
-  --infos: #1f2035;
+  --infos: #201f35;
 }
 
 body {
@@ -57,7 +56,6 @@ h5 {
 
 
 #presentation {
-  background-color: var(--pres);
   max-width: 1000px;
   width: 80%;
 }
@@ -230,6 +228,3 @@ select {
   }
 }
 
-.infos {
-  background-color: var(--infos)
-}
