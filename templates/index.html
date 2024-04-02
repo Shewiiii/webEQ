@@ -46,7 +46,7 @@
             </table>
         </div>
         <div class="buttons">
-            <a href="{{url_for('wavelet')}}" download='test' class=" dl">Export to Wavelet</a>
+            <a href="{{url_for('wavelet')}}" download='test' class=" dl">Export to Wavelet/EQapo</a>
             <a href="{{url_for('poweramp')}}" download='test' class="dl">Export to Poweramp</a>
             <a href="{{url_for('parametric')}}" download='test' class="dl">Download Parametric EQ</a>
             <a onclick="iircopy()" class="dl" id="iir" data-iir="{{ iir }}">Copy IIR string</a>
@@ -90,7 +90,7 @@
         <h5>- Settings -</h5>
         <p>Tilt: The more the tilt is important, the more it will sound 'dark'. If you prefer a brighter sound, choose
             -0.8dB/oct.</p>
-        <p>3kHz dip: Reduce the volume of the ear-gain if it sounds to shouty.</p>
+        <p>3kHz dip: Reduce the volume of the ear-gain if it sounds too shouty.</p>
     </div>
     <div style="padding-top: 50px;"></div>
     <div>
@@ -101,25 +101,52 @@
 
     <h3>- Random infos -</h3>
     <div style="text-align: left;">
-        <h4>Yes autoEQ exists, and it's great, but</h4>
-        <p>You should use it instead of this website if your device is available
-            on it <strong>with B&K 5128 measurements</strong> (which is probably not the case). If it's not,
-            your EQ will probably be
-            inaccurate, especially for in-ear devices, because of the inaccurate acoustic input impedence other
-            measurement rigs have.</p>
-        <p> Here, all EQ profiles are based on the B&K 5128, the most
-            accurate measurement rig available today,
-            and have been created using relevant targets such as JM-1 or SoundGuys' target.
-            The EQ results should be much more
-            enjoyable and "neutral" than autoEQ's by default.
+        <h4>How these EQ profiles have been generated</h4>
+        <p>All the EQ profiles on this website have been generated using the AutoEQ feature (not the project) available
+            on many graph tools like <a class="link" href="https://squig.link/" target="_blank">Squiglink</a>, <a
+                class="link" href="https://listener800.github.io/5128" target="_blank">Listener's graph database</a> or
+            <a class="link" href="https://crinacle.com/graphs/iems/graphtool/" target="_blank">Crinacle's IEF graph
+                tool</a>.
         </p>
-        <h4>Don't pay for SoundID/Sonarworks for headphones PLEASE, it's just eye candy.</h4>
+        <p> They are all based on <strong>measurements took on the B&K 5128</strong> or the 4620 (without the head and
+            torso), the most
+            accurate measurement rig available today.
+        </p>
+        <h4>Yes <a class="link" href="https://autoeq.app/" target="_blank">AutoEQ</a> exists, and it's great</h4>
+        <p>AutoEQ has MUCH more features than my website (which is just a web interface of an EQ repo basically).
+        <p>
+            But please note that <strong>if your device is not available with B&K 5128 or 4620 measurements, the EQ will
+                probably
+                be inaccurate, especially for in-ear devices</strong>, because of the inaccurate acoustic input
+            impedence
+            other
+            measurement rigs have.
+        </p>
+        <h4>PLEASE don't pay for SoundID/Sonarworks for headphones, it's just eye candy.</h4>
         <p>I have some problems with that software when it comes to headphones. First,
             it's paid. Second, you don't know
             anything about their methodology of EQing. You don't know the rig they are using, you don't (explicitly)
             know the target they are using,
             NOTHING. What they are calling flat sound is based on what? on private research, and I refuse to pay for
-            something you know anything about and that you can get for free. If you really want something similar to
+            something you know anything about and that you can get for free.
+        <p>I really think what I'm saying, it's not just to tell you "oh wow my website is amazing". EQing
+            using B&K
+            measurements combined with a target you choose and you
+            <strong>know something about</strong> is in my opinion the obvious choice and will lead to much, much better
+            results than SoundID. And guess what? <strong>All the frequency responses I've scraped and the EQ profiles I
+                suggest here dont't cost you a cent</strong>. You just have to use them with whatever software present
+            on
+            the Results tab (Wavelet and Equalizer APO are free softwares).
+        </p>
+        <p>
+            You want to tweak you target more? No probs ! Download a frequency response file in <a class="link"
+                href="https://github.com/Shewiiii/webEQ/tree/main/frequency_responses" target="_blank">my repo</a>,
+            import it in <a class="link"
+                href="https://listener800.github.io/5128?share=Custom_Tilt&bass=0&tilt=-1&treble=0&ear=0"
+                target="_blank">Listener's graph tool</a> and autoEQ from here !
+        </p>
+        <p>
+            If you REALLY want something similar to
             Sonarworks, just use the Harman OE 2015 target on autoEQ with Equalizer APO or Wavelet.</p>
         <h4>Why I'm doing this</h4>
         <p>Because I'm using it personally and because it's fun to do @w@</p>

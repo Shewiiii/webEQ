@@ -228,3 +228,13 @@ select {
   }
 }
 
+.link {
+	color:#c4b5fd;
+	transition-property: color;
+	transition-duration: 0.3s;
+	text-decoration: none;
+}
+
+.link:hover {
+    color:#D8CEFD;
+}
