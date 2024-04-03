@@ -161,15 +161,16 @@
             On headphones especially, frequency response changes a lot depending on position. This is something you
             should take into consideration when EQing but also in general when you look at a frequency response graph.
         </p>
-        <h4>The resonance frequency EQed</h4>
+        <h4>The resonant frequency EQed</h4>
         <p>This is a problem trying to solve. Basically, your earphones (or headphones) can interact strongly at a
             certain frequency,
-            known as the resonance frequency. This results in a dip in the measured frequency response. This phenomenon,
+            known as the resonant frequency. This results in a dip in the measured frequency response. This phenomenon,
             although it also occurs in the human ear, does not necessarily occur at the same frequency or amplitude.
             Equalizing this region could therefore cause inaccuracies.</p>
     </div>
 </div>
 <div style="padding-top: 250px;"></div>
+<canvas class="myChart" aria-label="charte des SRS" role="image"></canvas>
 <p style="text-align: center;color: var(--secondary3);font-family: Segoe UI Bold;font-weight: bold;">
     かえるぴょこぴょこみぴょこぴょこ
     (/・ω・)/</p>
@@ -179,4 +180,8 @@
         navigator.clipboard.writeText(copyText);
     }
 </script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<script src="../static/js/jquery.viewportchecker.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script src="../static/js/oui.js"></script>
 {% endblock %}
