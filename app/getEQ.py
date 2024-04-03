@@ -20,7 +20,7 @@ def getParaEQ(iem:str,target:str) -> dict:
     paras = open(EQPath, 'r').readlines()[1:]
     final = {}
     for para in paras:
-        values = re.findall(r"[-+]?(?:\d*\.*\d+)",para) #donc [num du filtre, fréquence, gain, q value]
+        values = re.findall(r"[-+]?(?:\d*\.*\d+)",para) #trouve float dans un str #donc [num du filtre, fréquence, gain, q value]
         if values[1] != '0':
             final[f'{values[0]}'] = values[1:] #dans valeur une liste: fréquence, gain, q value
     return final
