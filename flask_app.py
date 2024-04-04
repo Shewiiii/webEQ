@@ -1,6 +1,8 @@
 from flask import Flask, render_template, request,send_file
 from app.getFRoT import getFRoTList
 from app.getEQ import getParaEQ,getIIRString
+from app.computeFilters import getAllFR
+from app.normalize import normalize
 app = Flask(__name__)
 
 class Parameters():
@@ -28,7 +30,26 @@ def results():
     
     paraEQ = getParaEQ(Parameters.rawiem,Parameters.target)
     iir = getIIRString(Parameters.rawiem,Parameters.target)
-    return render_template('index.html',FRList=list(FRDict.keys()), targetList=targetList,result="aouiiii", paraEQ=paraEQ, iem=Parameters.iem, target=Parameters.target, iir=iir)
+
+    frequencies,gains,newgains,Tfrequencies,Tgains,AVGgain = getAllFR(Parameters.rawiem,Parameters.target)
+    Tgains = normalize(frequencies,newgains,Tfrequencies,Tgains)
+
+    return render_template('index.html',\
+                            FRList=list(FRDict.keys()),\
+                            targetList=targetList,\
+                            result="aouiiii",\
+                            paraEQ=paraEQ,\
+                            iem=Parameters.iem,\
+                            target=Parameters.target,\
+                            iir=iir,\
+                            #pour graph:
+                            frequencies=frequencies,\
+                            gains=gains,\
+                            newgains=newgains,\
+                            Tfrequencies=Tfrequencies,\
+                            Tgains=Tgains,\
+                            AVGgain=AVGgain
+                            )
 
 @app.route('/wavelet')
 def wavelet():

@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from app.getFRfromFile import *
-from app.getEQ import getParaEQ
+from getFRfromFile import *
+from getEQ import getParaEQ
 from math import *
 
 def peak(frequency,q,gain,samplerate=48000): #source: source code of listener/crinacle/...'s graph tool
@@ -63,3 +63,17 @@ def getAllFR(rawiem:str,target:str) -> list:
     Tfrequencies,Tgains = getFRfromFile(target+'.txt','targets') #FR of the target
 
     return frequencies,gains,newgains,Tfrequencies,Tgains,AVGgain
+
+def plotEQ(rawiem,target):
+    frequencies,gains,newgains,Tfrequencies,Tgains,AVGgain = getAllFR(rawiem,target)
+    plt.figure(figsize=(16,9))
+    plt.plot(frequencies,gains,'b')
+    plt.plot(frequencies,newgains,'r')
+    plt.plot(Tfrequencies,Tgains,'gray',linestyle='dashed')
+    plt.grid(True, which="both")
+    plt.xscale("log")
+    plt.axis([20,20000,AVGgain-15,AVGgain+15])
+    plt.legend([rawiem, rawiem+' EQ',target], loc="lower left")
+    plt.show()
+
+#plotEQ('[APROX]Moondrop Blessing2 (AVG)','Shewi Target')

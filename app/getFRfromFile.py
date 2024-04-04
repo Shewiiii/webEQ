@@ -2,7 +2,7 @@ import pathlib
 import re
 
 def getFRfromFile(file:str,relativepath:str='frequency_responses') -> tuple[list,list]: #file with extention (.txt)
-    path = pathlib.Path(__file__).parents[1] / relativepath / file
+    path = pathlib.Path(__file__).parents[1] / relativepath / f'{file.replace('.txt','')}.txt'
     lines = open(path,'r').readlines()
 
     frequencyList = []
@@ -16,6 +16,8 @@ def getFRfromFile(file:str,relativepath:str='frequency_responses') -> tuple[list
     for fr,amplitude in sortedDico.items():
         frequencyList.append(fr)
         amplitudeList.append(amplitude)
+    if amplitudeList[-1]<0:
+        for i in range(len(amplitudeList)):
+            amplitudeList[i] += 80
     return frequencyList,amplitudeList
 
-frequency,amplitude = getFRfromFile('!.txt')
