@@ -21,7 +21,7 @@
 </div>
 <div style="padding-top: 20px;"></div>
 {% if result != None %}
-<div class="maindivs">
+<div class="maindivs chart">
     <canvas id="myChart"></canvas>
 </div>
 {% endif %}
@@ -200,12 +200,12 @@
 
     var gradient = myChart.createLinearGradient(0, 0, 0, 500);
     gradient.addColorStop(0, 'rgba(81, 58, 197, 1)');
-    gradient.addColorStop(1, 'rgba(100, 100, 0,0)');
+    gradient.addColorStop(1, 'rgba(0, 0, 0,0)');
 
     var gradient2 = myChart.createLinearGradient(0, 0, 0, 500);
     gradient2.addColorStop(0, 'rgba(51, 51, 51, 1)');
-    gradient2.addColorStop(1, 'rgba(100, 100, 0,0)');
-    gradient2.addColorStop(1, 'rgba(100, 100, 0,0)');
+    gradient2.addColorStop(0.2, 'rgba(51, 51, 51, 1)');
+    gradient2.addColorStop(1, 'rgba(0, 0, 0,0)');
 
     new Chart(myChart, {
         type: 'line',
@@ -236,6 +236,7 @@
                 }]
         },
         options: {
+            maintainAspectRatio: false,
             interaction: {
                 mode: 'x',
             },
@@ -272,7 +273,7 @@
                         text: "Frequency (Hz)",
                         font: {
                             family: "Poppins",
-                            size: 15,
+                            size: 10,
                         },
                     },
                 },
@@ -296,7 +297,7 @@
                         text: "Gain (dB)",
                         font: {
                             family: "Poppins",
-                            size: 15,
+                            size: 10,
                         },
                     },
                 },
@@ -312,7 +313,7 @@
                         color: "#FFFFFF",
                         font: {
                             family: "Poppins",
-                            size: 20,
+                            size: 15,
                         }
                     }
                 },
