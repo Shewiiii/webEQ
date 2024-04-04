@@ -10,5 +10,4 @@ def normalize(frequencies:list,newgains:list,Tfrequencies:list,Tgains,at:float=1
     deltagain = newgains[i]-Tgains[j]
     for l in range(Tvalcount):
         Tgains[l] += deltagain-0.2
-        print(Tgains[l],Tfrequencies[l])
     return Tgains

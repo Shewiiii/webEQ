@@ -2,7 +2,8 @@ import pathlib
 import re
 
 def getFRfromFile(file:str,relativepath:str='frequency_responses') -> tuple[list,list]: #file with extention (.txt)
-    path = pathlib.Path(__file__).parents[1] / relativepath / f'{file.replace('.txt','')}.txt'
+    file = file.replace('.txt','')
+    path = pathlib.Path(__file__).parents[1] / relativepath / f'{file}.txt'
     lines = open(path,'r').readlines()
 
     frequencyList = []

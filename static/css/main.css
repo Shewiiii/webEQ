@@ -238,3 +238,9 @@ select {
 .link:hover {
     color:#D8CEFD;
 }
+
+
+
+.chart {
+  min-height: 600px;
+}
