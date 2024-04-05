@@ -1,6 +1,6 @@
 import pathlib
 import re
-
+from app.cleanData import cleanData
 
 # file with extention (.txt)
 def getFRfromFile(file: str, relativepath: str = 'frequency_responses') -> tuple[list, list]:
@@ -20,7 +20,6 @@ def getFRfromFile(file: str, relativepath: str = 'frequency_responses') -> tuple
     for fr, amplitude in sortedDico.items():
         frequencyList.append(fr)
         amplitudeList.append(amplitude)
-    if amplitudeList[-1] < 0:
-        for i in range(len(amplitudeList)):
-            amplitudeList[i] += 80
+    
+    frequencyList, amplitudeList = cleanData(frequencyList, amplitudeList)
     return frequencyList, amplitudeList

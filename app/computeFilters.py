@@ -3,8 +3,6 @@ import matplotlib.pyplot as plt
 from app.getFRfromFile import *
 from app.getEQ import getParaEQ
 from math import *
-
-
 # source: source code of listener/crinacle/...'s graph tool
 def peak(frequency, q, gain, samplerate=48000):
     frequency = frequency / samplerate
@@ -55,22 +53,17 @@ def getCoeffs(rawFilename: str, target: str) -> list:
 def getAllFR(rawiem: str, target: str) -> list:
     # get FR of the iem from a/the txt file
     frequencies, gains = getFRfromFile(rawiem.replace('.txt', '')+'.txt')
-    AVGgain = 0
-
     valcount = len(frequencies)
-    for a in gains:
-        AVGgain += a
-    AVGgain = AVGgain/valcount
 
     coeffs = getCoeffs(rawiem, target)  # compute the coeffs of the peak EQs
     # cumpute the gains of the final EQ
     deltaGains = calcGains(frequencies, coeffs)
-    newgains = []
+    newGains = []
     for i in range(valcount):
         # reshape de final EQ basically
-        newgains.append(gains[i]+deltaGains[i])
+        newGains.append(gains[i]+deltaGains[i])
 
     Tfrequencies, Tgains = getFRfromFile(
         target+'.txt', 'targets')  # FR of the target
 
-    return frequencies, gains, newgains, Tfrequencies, Tgains, AVGgain
+    return frequencies, gains, newGains, Tgains

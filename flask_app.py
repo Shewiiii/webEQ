@@ -2,7 +2,8 @@ from flask import Flask, render_template, request, send_file
 from app.getFRoT import getFRoTList
 from app.getEQ import getParaEQ, getIIRString
 from app.computeFilters import getAllFR
-from app.normalize import normalize
+from app.cleanData import normalize
+from app.dynamicAutoEQ import autoEQ
 app = Flask(__name__)
 
 
@@ -30,12 +31,9 @@ def results():
     Parameters.target = str(request.form.get('select2'))
     print(Parameters.iem, Parameters.target)
 
-    paraEQ = getParaEQ(Parameters.rawiem, Parameters.target)
-    iir = getIIRString(Parameters.rawiem, Parameters.target)
-
-    frequencies, gains, newgains, Tfrequencies, Tgains, AVGgain = getAllFR(
-        Parameters.rawiem, Parameters.target)
-    Tgains = normalize(frequencies, newgains, Tfrequencies, Tgains)
+    frequencies, gains, newgains, Tgains, paraEQ, iir = autoEQ(
+        Parameters.iem, Parameters.target)
+    Tgains = normalize(frequencies, newgains, Tgains)
 
     return render_template('index.html',
                            FRList=list(FRDict.keys()),
@@ -49,33 +47,25 @@ def results():
                            frequencies=frequencies, \
                            gains=gains, \
                            newgains=newgains, \
-                           Tfrequencies=Tfrequencies, \
-                           Tgains=Tgains, \
-                           AVGgain=AVGgain
+                           Tgains=Tgains
                            )
 
 
 @app.route('/wavelet')
 def wavelet():
-    path = f'presets\\{Parameters.target}\\Wavelet\\{
-        Parameters.rawiem} [{Parameters.target}].txt'
-    print(path)
+    path = f'generated_files\\{Parameters.iem} [{Parameters.target}] (Wavelet,Equalizer APO).txt'
     return send_file(path, as_attachment=True)
 
 
 @app.route('/poweramp')
 def poweramp():
-    path = f'presets\\{Parameters.target}\\Poweramp\\{
-        Parameters.rawiem} [{Parameters.target}].json'
-    print(path)
+    path = f'generated_files\\{Parameters.iem} [{Parameters.target}] (Poweramp).json'
     return send_file(path, as_attachment=True)
 
 
 @app.route('/parametric')
 def parametric():
-    path = f'presets\\{Parameters.target}\\Parametric\\{
-        Parameters.rawiem} [{Parameters.target}].txt'
-    print(path)
+    path = f'generated_files\\{Parameters.iem} [{Parameters.target}] (Parametric EQ).txt'
     return send_file(path, as_attachment=True)
 
 
