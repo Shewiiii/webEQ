@@ -42,7 +42,13 @@
                 </tr>
                 {% for keys in paraEQ %}
                 <tr>
-                    <th>{{ keys }}</th>
+                    {% if keys == 1 %}
+                    <th>LShelf</th>
+                    {% elif keys == 2 %}
+                    <th>HShelf</th>
+                    {% else %}
+                    <th>Peak</th>
+                    {% endif %}
                     <th>{{ paraEQ[keys][0] }}</th>
                     <th>{{ paraEQ[keys][1] }}</th>
                     <th>{{ paraEQ[keys][2] }}</th>

@@ -43,14 +43,14 @@ def results():
         concha_interference = False
 
     if str(request.form.get('EQabobe10k')) == 'Yes':
-        treble_f_lower = float(19000)
+        treble_f_lower = float(19500)
     else:
         treble_f_lower = float(10000)
 
     mode = str(request.form.get('mode'))
     if mode == 'Standard':
         config = {
-            'filters': [{'type': 'PEAKING'}] * filterCount}
+            'filters': [{'type': 'LOW_SHELF','fc': 105.0},{'type': 'HIGH_SHELF','fc': 10000.0}]+[{'type': 'PEAKING'}] * (filterCount-1)}
     elif mode == 'Moondrop Free DSP':
         config = PEQ_CONFIGS['MOONDROP_FREE_DSP']
     frequencies, gains, newgains, Tgains, paraEQ, iir = autoEQ(Parameters.iem,\

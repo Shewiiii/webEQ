@@ -8,7 +8,7 @@ from numpy import array
 
 FRlist = getFRoTList('frequency_responses')
 target = 'Shewi Target'
-iem = 'Razer Moray'
+iem = '64 audio Völour (m15)'
 
 frequencies,gains = getFRfromFile(f'{FRlist[iem]}.txt',relativepath='frequency_responses')    
 Tfrequencies,Tgains = getFRfromFile(f'{target}.txt',relativepath='targets')
@@ -22,10 +22,10 @@ iemAQ.compensate(targetAQ)
 iemAQ.smoothen()
 iemAQ.equalize(concha_interference=True,treble_f_lower=15000,treble_f_upper=20001,max_gain=10)
 
-peqs = iemAQ.optimize_parametric_eq({'filters': [{'type': 'PEAKING'}] * 1}, 48000)
+peqs = iemAQ.optimize_parametric_eq({'filters': [{'type': 'HIGH_SHELF','fc': 10000.0,'q': 0.7}]+[{'type': 'PEAKING'}] * 10}, 48000)
 i = 0
 for filt in peqs[0].filters:
     i+=1
-    print(f'Filter {i}: ON PK Fc {filt.fc:.2f} Hz Gain {filt.gain:.2f} dB Q {filt.q:.2f}')
+    print(f'{filt.gain:.2f} db, {filt.fc:.2f} Hz, {filt.q:.2f} Q')
 
 iemAQ.plot()
