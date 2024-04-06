@@ -16,7 +16,7 @@ class Parameters():
 @app.route('/', methods=['GET', 'POST'])
 def index():
     FRList = list(getFRoTList('frequency_responses').keys())
-    targetList = list(getFRoTList('presets').keys())
+    targetList = list(getFRoTList('targets').keys())
     return render_template('index.html', FRList=FRList, targetList=targetList, result=None)
 
 
@@ -24,7 +24,7 @@ def index():
 def results():
     # dictionnaire avec en clé le model et en valeur le nom du fichier brut
     FRDict = getFRoTList('frequency_responses')
-    targetList = list(getFRoTList('presets').keys())
+    targetList = list(getFRoTList('targets').keys())
 
     Parameters.iem = str(request.form.get('select1'))
     Parameters.rawiem = FRDict[Parameters.iem]

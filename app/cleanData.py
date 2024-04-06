@@ -1,6 +1,6 @@
 from autoeq.frequency_response import FrequencyResponse
 
-def normalize(frequencies: list, newgains: list, Tgains, at: int = 10):
+def normalize(frequencies: list, newgains: list, Tgains, at: int = 35):
     #THIS IS SO CURSED LMAO
     Tvalcount = len(frequencies)
     deltagain = newgains[at]-Tgains[at]

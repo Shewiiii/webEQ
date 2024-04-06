@@ -14,7 +14,7 @@ def paraToIIR(paraEQ):
     return string
 
 def createParaEQFile(iem:str,target:str,paraEQ:dict):
-    filePath = f'generated_files/{iem} [{target}] (Parametric EQ).txt'
+    filePath = pathlib.Path(__file__).parents[1] / f'generated_files/{iem} [{target}] (Parametric EQ).txt'
     if not Path(filePath).is_file():
         string = ''
         i = 0
@@ -24,7 +24,7 @@ def createParaEQFile(iem:str,target:str,paraEQ:dict):
         open(filePath,'w').write(string)
 
 def createPAFile(iem:str,target:str,paraEQ:dict):
-    filePath = f'generated_files/{iem} [{target}] (Poweramp).json'
+    filePath = pathlib.Path(__file__).parents[1] / f'generated_files/{iem} [{target}] (Poweramp).json'
     if not Path(filePath).is_file():
         bands = [{"type":0,"channels":0,"frequency":90,"q":0,"gain":0.0,"color":0},{"type":1,"channels":0,"frequency":10000,"q":0,"gain":0.0,"color":0}]
         for paras in paraEQ.values():
@@ -34,7 +34,7 @@ def createPAFile(iem:str,target:str,paraEQ:dict):
 
 def createWaveletFile(iem:str,target:str,iemAQ):
     string = iemAQ.eqapo_graphic_eq()
-    filePath = f'generated_files/{iem} [{target}] (Wavelet,Equalizer APO).txt'
+    filePath = pathlib.Path(__file__).parents[1] / f'generated_files/{iem} [{target}] (Wavelet,Equalizer APO).txt'
     if not Path(filePath).is_file():
         open(filePath,'w').write(string)
     
@@ -81,5 +81,6 @@ def autoEQ(iem:str,target:str,filterCount:int=10,upshift:int=60):
     #Create files
     createParaEQFile(iem,target,paraEQ)
     createPAFile(iem,target,paraEQ)
-
+    createWaveletFile(iem,target,iemAQ)
+    
     return frequencies, gains, newGains, Tgains, paraEQ, IIRstring
