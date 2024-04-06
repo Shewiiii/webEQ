@@ -15,30 +15,28 @@ def paraToIIR(paraEQ):
 
 def createParaEQFile(iem:str,target:str,paraEQ:dict):
     filePath = pathlib.Path(__file__).parents[1] / f'generated_files/{iem} [{target}] (Parametric EQ).txt'
-    if not Path(filePath).is_file():
-        string = ''
-        i = 0
-        for paras in paraEQ.values():
-            i += 1
-            string += f'Filter {i}: ON PK Fc {paras[0]} Hz Gain {paras[1]} dB Q {paras[2]}\n'
-        open(filePath,'w').write(string)
+
+    string = ''
+    i = 0
+    for paras in paraEQ.values():
+        i += 1
+        string += f'Filter {i}: ON PK Fc {paras[0]} Hz Gain {paras[1]} dB Q {paras[2]}\n'
+    open(filePath,'w').write(string)
 
 def createPAFile(iem:str,target:str,paraEQ:dict):
     filePath = pathlib.Path(__file__).parents[1] / f'generated_files/{iem} [{target}] (Poweramp).json'
-    if not Path(filePath).is_file():
-        bands = [{"type":0,"channels":0,"frequency":90,"q":0,"gain":0.0,"color":0},{"type":1,"channels":0,"frequency":10000,"q":0,"gain":0.0,"color":0}]
-        for paras in paraEQ.values():
-            bands.append({"type":3,"channels":0,"frequency":paras[0],"q":paras[2],"gain":paras[1],"color": randint(-16711680,0)})
-        string = str([{"name":f"{iem} [{target}]","preamp":0.0,"parametric": True,"bands": bands}]).replace("'",'"').replace("True","true")
-        open(filePath,'w').write(string)
+    bands = [{"type":0,"channels":0,"frequency":90,"q":0,"gain":0.0,"color":0},{"type":1,"channels":0,"frequency":10000,"q":0,"gain":0.0,"color":0}]
+    for paras in paraEQ.values():
+        bands.append({"type":3,"channels":0,"frequency":paras[0],"q":paras[2],"gain":paras[1],"color": randint(-16711680,0)})
+    string = str([{"name":f"{iem} [{target}]","preamp":0.0,"parametric": True,"bands": bands}]).replace("'",'"').replace("True","true")
+    open(filePath,'w').write(string)
 
 def createWaveletFile(iem:str,target:str,iemAQ):
     string = iemAQ.eqapo_graphic_eq()
     filePath = pathlib.Path(__file__).parents[1] / f'generated_files/{iem} [{target}] (Wavelet,Equalizer APO).txt'
-    if not Path(filePath).is_file():
-        open(filePath,'w').write(string)
+    open(filePath,'w').write(string)
     
-def autoEQ(iem:str,target:str,filterCount:int=10,upshift:int=60):
+def autoEQ(iem:str,target:str,config,concha_interference,treble_f_lower,upshift:int=60):
     FRlist = getFRoTList('frequency_responses')
     frequencies,gains = getFRfromFile(f'{FRlist[iem]}.txt',relativepath='frequency_responses')    
     Tfrequencies,Tgains = getFRfromFile(f'{target}.txt',relativepath='targets')
@@ -50,15 +48,24 @@ def autoEQ(iem:str,target:str,filterCount:int=10,upshift:int=60):
     iemAQ.center()
     iemAQ.compensate(targetAQ)
     iemAQ.smoothen()
-    iemAQ.equalize(concha_interference=True,treble_f_lower=15000,treble_f_upper=20001,max_gain=10)
+    iemAQ.equalize(concha_interference=concha_interference,treble_f_lower=treble_f_lower,treble_f_upper=20000,treble_window_size=1/12,treble_gain_k=1,max_gain=99)
 
     targetAQ.interpolate()
     targetAQ.center()
     targetAQ.smoothen()
 
+    peqs = iemAQ.optimize_parametric_eq(config, 48000)
+    #generate paraEQ filters
+    i = 0
+    paraEQ = {}
+    for filt in peqs[0].filters:
+        i += 1
+        paraEQ[i] = [round(filt.fc),round(filt.gain,1),round(filt.q,1)]
+        #{1: [frequency,gain,q]}
+
     frequencies = list(iemAQ.frequency)
     gains = list(iemAQ.raw)
-    newGains = list(iemAQ.equalized_raw)
+    newGains = list(iemAQ.raw+iemAQ.parametric_eq)
 
     Tgains = list(targetAQ.raw)
 
@@ -66,15 +73,6 @@ def autoEQ(iem:str,target:str,filterCount:int=10,upshift:int=60):
         gains[i] += upshift
         newGains[i] += upshift
         Tgains[i] += upshift
-
-    #generate paraEQ filters
-    peqs = iemAQ.optimize_parametric_eq({'filters': [{'type': 'PEAKING'}] * filterCount}, 48000)
-    i = 0
-    paraEQ = {}
-    for filt in peqs[0].filters:
-        i += 1
-        paraEQ[i] = [round(filt.fc),round(filt.gain,1),round(filt.q,1)]
-        #{1: [frequency,gain,q]}
 
     #generate IIR string
     IIRstring = paraToIIR(paraEQ)

@@ -2,9 +2,9 @@
 {% block head%}{% endblock %}
 
 {% block body%}
-
+<h1>Shewi!</h1>
+{% if result == None %}
 <div class="tout">
-    <h1>Shewi!</h1>
     <div id="presentation" class="maindivs">
         <h2>- Instant EQ your earphones ! -</h2>
         <p>EQ is the easiest way to improve sound quality of your audio device, but doing it right isn't easy to do. So
@@ -20,6 +20,7 @@
     </div>
 </div>
 <div style="padding-top: 20px;"></div>
+{% endif %}
 {% if result != None %}
 <div class="maindivs chart">
     <canvas id="myChart"></canvas>
@@ -64,19 +65,63 @@
 <div class="maindivs EQdiv">
     <h3>- Try it ! -</h3>
     <form method="POST" action="{{ url_for('results') }}">
-        <select name="select1" id="IEM">
-            <option> Choose your device </option>
+        <select name="iem" class="mainSelect">
+            <option selected disabled hidden> Choose your device </option>
             {% for iem in FRList %}
             <option> {{ iem }} </option>
             {% endfor %}
         </select>
         <h4>EQ to..</h4>
-        <select name="select2" id="target">
-            <option> Choose a target </option>
+
+        <select name="target" class="mainSelect">
+            <option selected disabled hidden> Choose a target </option>
             {% for target in targetList %}
             <option> {{ target }} </option>
             {% endfor %}
         </select>
+
+        <div style="padding-top: 30px;"></div>
+        <h4>- Settings -</h4>
+        <p>Don't change if you don't know what you are doing !</p>
+        <div class="flexThing EQoptions">
+            <div class="EQoption">
+                <p>Number of filters:</p>
+                <select name="filterCount" class="optionSelect">
+                    <option> 5 </option>
+                    <option> 10 </option>
+                    <option selected="selected"> 15 </option>
+                    <option> 20 </option>
+                </select>
+                <p class="idkSelect">Default: 15</p>
+            </div>
+
+            <div class="EQoption">
+                <p>EQ the resonant peak:</p>
+                <select name="EQres" class="optionSelect">
+                    <option> Yes </option>
+                    <option selected="selected"> No </option>
+                </select>
+                <p class="idkSelect">Default: No</p>
+            </div>
+
+            <div class="EQoption">
+                <p>Reduce accuracy above 10kHz:</p>
+                <select name="EQabobe10k" class="optionSelect">
+                    <option> Yes </option>
+                    <option selected="selected"> No </option>
+                </select>
+                <p class="idkSelect">Default: No</p>
+            </div>
+
+            <div class="EQoption">
+                <p>Mode:</p>
+                <select name="mode" class="optionSelect">
+                    <option selected="selected"> Standard </option>
+                    <option> Moondrop Free DSP </option>
+                </select>
+                <p class="idkSelect">Default: Standard</p>
+            </div>
+        </div>
         <button type="submit" class="generateButton">Go !</button>
     </form>
     <div class='maindivs hint' style="text-align: left;">
@@ -92,9 +137,13 @@
         <p><strong>JM-1</strong>: Neutral for IEMs</p>
         <p><strong>Harman Beta (2024)</strong>: If you want a sound similar to AutoEQ but more precise</p>
         <h5>- Settings -</h5>
-        <p>Tilt: The more the tilt is important, the more it will sound 'dark'. If you prefer a brighter sound, choose
+        <p><strong>Tilt</strong>: The more the tilt is important, the more it will sound 'dark'. If you prefer a brighter sound, choose
             -0.8dB/oct.</p>
-        <p>3kHz dip: Reduce the volume of the ear-gain if it sounds too shouty.</p>
+        <p><strong>Number of filters</strong>: as the name suggests.</p>
+        <p><strong>3kHz dip</strong>: Reduce the volume of the ear-gain if it sounds too shouty.</p>
+        <p><strong>EQ the resonant peak</strong>: Sometimes on the graph you can see a dip around 9kHz. That is due to the IEM or TWS interacting more at a certain frequency with the measurement rig. Thus, EQing this region can lead to an inaccurate equalization (if that dip is caused by resonance). Disabling this option can help preventing that.</p>
+        <p><strong>Reduce accuracy above 10kHz</strong>: Can help prevent EQing high-frequency content that you don't actually hear</p>
+        <p><strong>Mode</strong>: Adapt the generated EQ to a particular device. Can overwrite other options.</p>
     </div>
     <div style="padding-top: 50px;"></div>
     <div>
@@ -127,7 +176,8 @@
             accurate measurement rig available today.
         </p>
         <h4>Yes <a class="link" href="https://autoeq.app/" target="_blank">AutoEQ</a> exists, and it's great</h4>
-        <p>AutoEQ has MUCH more features than my website (which is just a web interface of an EQ repo basically).
+        <p>This project exists thanks to AutoEQ since I'm using it's Python module ! The website has MUCH more features
+            and models than my website so it's worth checking.
         <p>
             But please note that <strong>if your device is not available with B&K 5128 or 4620 measurements, the EQ will
                 probably
@@ -165,6 +215,8 @@
             Sonarworks, just use the Harman OE 2015 target on autoEQ with Equalizer APO or Wavelet.</p>
         <h4>Why I'm doing this</h4>
         <p>Because I'm using it personally and because it's fun to do @w@</p>
+        <p>My motivation was to make my own "AutoEQ" website, but more accurate (since every EQ generated are based on
+            5128 measurements) and with a look that suits me better !</p>
         <h4>Specs of the EQ</h4>
         <p>I'm trying to EQ up to 20khz, since the 5128 is accurate enough to allow EQing the full audible
             range.<br><strong>However</strong>, you should note that all our ears are different, thus the frequency
@@ -176,12 +228,6 @@
             On headphones especially, frequency response changes a lot depending on position. This is something you
             should take into consideration when EQing but also in general when you look at a frequency response graph.
         </p>
-        <h4>The resonant frequency EQed</h4>
-        <p>This is a problem trying to solve. Basically, your earphones (or headphones) can interact strongly at a
-            certain frequency,
-            known as the resonant frequency. This results in a dip in the measured frequency response. This phenomenon,
-            although it also occurs in the human ear, does not necessarily occur at the same frequency or amplitude.
-            Equalizing this region could therefore cause inaccuracies.</p>
     </div>
 </div>
 <div style="padding-top: 250px;"></div>

@@ -1,8 +1,8 @@
 from autoeq.frequency_response import FrequencyResponse
 from autoeq.constants import PEQ_CONFIGS
 import pathlib
-from getFRoT import getFRoTList
-from getFRfromFile import *
+from app.getFRoT import getFRoTList
+from app.getFRfromFile import *
 from numpy import array
 #def...
 
@@ -22,7 +22,7 @@ iemAQ.compensate(targetAQ)
 iemAQ.smoothen()
 iemAQ.equalize(concha_interference=True,treble_f_lower=15000,treble_f_upper=20001,max_gain=10)
 
-peqs = iemAQ.optimize_parametric_eq({'filters': [{'type': 'PEAKING'}] * 14}, 48000)
+peqs = iemAQ.optimize_parametric_eq({'filters': [{'type': 'PEAKING'}] * 1}, 48000)
 i = 0
 for filt in peqs[0].filters:
     i+=1

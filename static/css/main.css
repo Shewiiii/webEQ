@@ -93,11 +93,8 @@ select {
   margin: 0;
   font-family: 'Segoe UI';
 
-  width: 100%;
-  min-width: 15ch;
-  max-width: 30ch;
   border: 1px solid var(--select-border);
-  border-radius: 0.25em;
+  border-radius: 0.75em;
   padding: 0.25em 0.5em;
   font-size: 1.25rem;
   cursor: pointer;
@@ -106,7 +103,26 @@ select {
   color: var(--text);
 }
 
+.mainSelect {
+  width: 100%;
+  min-width: 15ch;
+  max-width: 30ch;
+}
 
+.optionSelect {
+  width: 19ch;
+  margin: auto;
+  font-size: 1.2rem;
+}
+
+.idkSelect {
+  margin-top: 5px;
+  margin-bottom: 25px;
+}
+
+.EQoption {
+  margin:auto
+}
 .important {
   color: var(--red)
 }
@@ -228,6 +244,12 @@ select {
   }
 }
 
+@media screen and (max-width: 1235px) {
+  .EQoptions {
+    flex-direction: column;
+  justify-content: space-between;
+  }
+}
 .link {
 	color:#c4b5fd;
 	transition-property: color;
@@ -240,7 +262,8 @@ select {
 }
 
 
-
 .chart {
-  min-height: 600px;
+  min-height: 700px;
+  width: 100%;
+  max-width: 1600px;
 }
