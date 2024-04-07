@@ -42,16 +42,10 @@
                 </tr>
                 {% for keys in paraEQ %}
                 <tr>
-                    {% if keys == 1 %}
-                    <th>LShelf</th>
-                    {% elif keys == 2 %}
-                    <th>HShelf</th>
-                    {% else %}
-                    <th>Peak</th>
-                    {% endif %}
                     <th>{{ paraEQ[keys][0] }}</th>
                     <th>{{ paraEQ[keys][1] }}</th>
                     <th>{{ paraEQ[keys][2] }}</th>
+                    <th>{{ paraEQ[keys][3] }}</th>
                 </tr>
                 {% endfor %}
             </table>
@@ -70,7 +64,7 @@
 <div style="padding-top: 50px;"></div>
 <div class="maindivs EQdiv">
     <h3>- Try it ! -</h3>
-    <form method="POST" action="{{ url_for('results') }}">
+    <form id="EQform" method="POST" action="{{ url_for('resultsAQ') }}">
         <select name="iem" class="mainSelect">
             <option selected disabled hidden> Choose your device </option>
             {% for iem in FRList %}
@@ -91,44 +85,46 @@
         <p>Don't change if you don't know what you are doing !</p>
         <div class="flexThing EQoptions">
             <div class="EQoption">
-                <p>Number of filters:</p>
+                <p>Max number of filters:</p>
                 <select name="filterCount" class="optionSelect">
-                    <option> 5 </option>
-                    <option> 10 </option>
-                    <option selected="selected"> 15 </option>
-                    <option> 20 </option>
+                    <option value="5"> 5 </option>
+                    <option selected="selected" value="10"> 10 </option>
+                    <option value="15"> 15 </option>
+                    <option value="20"> 20 </option>
                 </select>
-                <p class="idkSelect">Default: 15</p>
+                <p class="idkSelect">Default: 10</p>
             </div>
 
             <div class="EQoption">
-                <p>EQ the resonant peak:</p>
+                <p>AutoEQ algorithm</p>
+                <select name="algorithm" class="optionSelect">
+                    <option selected="selected" value="lochbaum"> Lochbaum </option>
+                    <option value="default"> Default </option>
+                </select>
+                <p class="idkSelect">Default: Lochbaum</p>
+            </div>
+
+            <div class="EQoption">
+                <p>EQ the resonant peaks:</p>
                 <select name="EQres" class="optionSelect">
-                    <option> Yes </option>
-                    <option selected="selected"> No </option>
+                    <option selected="selected" value="yes"> Yes </option>
+                    <option value="no"> No </option>
                 </select>
-                <p class="idkSelect">Default: No</p>
-            </div>
-
-            <div class="EQoption">
-                <p>Reduce accuracy above 10kHz:</p>
-                <select name="EQabobe10k" class="optionSelect">
-                    <option> Yes </option>
-                    <option selected="selected"> No </option>
-                </select>
-                <p class="idkSelect">Default: No</p>
+                <p class="idkSelect">Recommended: No</p>
             </div>
 
             <div class="EQoption">
                 <p>Mode:</p>
                 <select name="mode" class="optionSelect">
-                    <option selected="selected"> Standard </option>
-                    <option> Moondrop Free DSP </option>
+                    <option selected="selected" value="standard"> Standard </option>
+                    <option value="moondrop"> Moondrop Free DSP </option>
                 </select>
                 <p class="idkSelect">Default: Standard</p>
             </div>
         </div>
-        <button type="submit" class="generateButton">Go !</button>
+        <p id="eqWarningAQ" class="warning" style="display: none;">Note: EQ can be less accurate above above 10kHz. </p>
+        <p id="eqWarningLO" class="warning">Note: Will EQ the resonant peaks if there are. </p>
+        <button id="goButton" type="submit" class="generateButton">Go !</button>
     </form>
     <div class='maindivs hint' style="text-align: left;">
         <h4 style="margin: 0;">Hint:</h4>
@@ -143,12 +139,21 @@
         <p><strong>JM-1</strong>: Neutral for IEMs</p>
         <p><strong>Harman Beta (2024)</strong>: If you want a sound similar to AutoEQ but more precise</p>
         <h5>- Settings -</h5>
-        <p><strong>Tilt</strong>: The more the tilt is important, the more it will sound 'dark'. If you prefer a brighter sound, choose
+        <p><strong>Tilt</strong>: The more the tilt is important, the more it will sound 'dark'. If you prefer a
+            brighter sound, choose
             -0.8dB/oct.</p>
         <p><strong>Number of filters</strong>: as the name suggests.</p>
         <p><strong>3kHz dip</strong>: Reduce the volume of the ear-gain if it sounds too shouty.</p>
-        <p><strong>EQ the resonant peak</strong>: Sometimes on the graph you can see a dip around 9kHz. That is due to the IEM or TWS interacting more at a certain frequency with the measurement rig. Thus, EQing this region can lead to an inaccurate equalization (if that dip is caused by resonance). Disabling this option can help preventing that.</p>
-        <p><strong>Reduce accuracy above 10kHz</strong>: Can help prevent EQing high-frequency content that you don't actually hear</p>
+        <p><strong>EQ the resonant peaks</strong>: Sometimes on the graph you can see a dip around 9kHz and a peak at around 7kHz. That is due to
+            the IEM or TWS interacting more at a certain frequency with the measurement rig. Thus, EQing this region can
+            lead to an inaccurate equalization (if that dip is caused by resonance). Disabling this option can help
+            preventing that.</p>
+        <p><strong>Algorithm</strong>: algorithm to use to generate the EQ.</p>
+            <ul>
+                <li>Lochbaum: Aggressive EQ. Match the target better on the full frequency range.</li>
+                <li>Default (from AutoEQ's library): Safer EQ. Fast and more customizability, but less precise 10kHz. Will not EQ the resonant peaks by default.</li>
+                <p><strong>Tip !</strong>: try to EQ with different algorithm and number of filters if the EQ you get doesn't satisfy you.</p>
+            </ul>
         <p><strong>Mode</strong>: Adapt the generated EQ to a particular device. Can overwrite other options.</p>
     </div>
     <div style="padding-top: 50px;"></div>
@@ -241,14 +246,62 @@
     かえるぴょこぴょこみぴょこぴょこ
     (/・ω・)/</p>
 <script>
-    function iircopy() {
-        var copyText = document.getElementById('iir').dataset.iir
-        navigator.clipboard.writeText(copyText);
+    var algoSelect = document.getElementsByName('algorithm')[0]
+    let algorithm = algoSelect.value
+
+    let modeSelect = document.getElementsByName('mode')[0]
+    let eqresSelect = document.getElementsByName('EQres')[0]
+    let goButton = document.getElementById('goButton')
+    let EQform = document.getElementById('EQform')
+    let eqWarningAQ = document.getElementById('eqWarningAQ')
+    let eqWarningLO = document.getElementById('eqWarningLO')
+
+    function changeToLoch() {
+        modeSelect.disabled = true;
+        eqresSelect.disabled = true;
+        modeSelect.value = 'standard';
+        eqresSelect.value = 'yes';
+        goButton.type = ''
+        EQform.action = '/lochbaum'
+        eqWarningAQ.style.display = 'none'
+        eqWarningLO.style.display = 'block'
     }
+
+    if (algorithm == 'lochbaum') {
+        changeToLoch()
+    } else if (algorithm == 'default') {
+        eqWarningAQ.style.display = 'block'
+        eqWarningLO.style.display = 'none'
+    }
+
+
+    function algoChange() {
+        var selected = this.value
+        console.log(selected);
+        if (selected == 'lochbaum') {
+            changeToLoch()
+        }
+        else if (selected == 'default') {
+            eqresSelect.disabled = false;
+            eqresSelect.value = "no"
+            modeSelect.disabled = false;
+            goButton.type = 'submit';
+            eqWarningAQ.style.display = 'block';
+            eqWarningLO.style.display = 'none';
+            EQform.action = '/resultsAQ';
+        }
+    }
+
+    document.getElementsByName('algorithm')[0].onchange = algoChange;
 </script>
 {% if result != None %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
+    function iircopy() {
+        var copyText = document.getElementById('iir').dataset.iir
+        navigator.clipboard.writeText(copyText);
+    }
+
     const myChart = document.getElementById('myChart').getContext("2d");
 
     var iem = {{ iem | tojson }};
@@ -259,11 +312,11 @@
     var Tgains = {{ Tgains | tojson }};
     var newgains = {{ newgains | tojson }};
 
-    var gradient = myChart.createLinearGradient(0, 0, 0, 500);
+    var gradient = myChart.createLinearGradient(0, 0, 0, 600);
     gradient.addColorStop(0, 'rgba(81, 58, 197, 1)');
     gradient.addColorStop(1, 'rgba(0, 0, 0,0)');
 
-    var gradient2 = myChart.createLinearGradient(0, 0, 0, 500);
+    var gradient2 = myChart.createLinearGradient(0, 0, 0, 600);
     gradient2.addColorStop(0, 'rgba(51, 51, 51, 1)');
     gradient2.addColorStop(1, 'rgba(0, 0, 0,0)');
 
@@ -380,4 +433,6 @@
     });
 </script>
 {% endif %}
+
+
 {% endblock %}

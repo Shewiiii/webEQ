@@ -40,30 +40,30 @@ def calcGains(frequencies: list, coeffs: list, samplerate=48000):
     return gains
 
 
-def getCoeffs(rawFilename: str, target: str) -> list:
+def getCoeffsAndPara(results) -> list:
+    #results example: [{'type': 'PK', 'freq': 20, 'q': 0.7, 'gain': -4.6},...]
     coeffs = []
-    paraDico = getParaEQ(rawFilename.replace('.txt', ''), target)
-    # donc [fréquence,gain,Q] mais en string pas float
-    for settings in paraDico.values():
-        coeffs.append(peak(float(settings[0]), float(
-            settings[2]), float(settings[1])))
-    return coeffs
+    paraEQ = {}
+    i = 0
+    filtersDict = {"PK":"Peak","LSC":"LShelf","HSC":"HShelf"}
+    for filter in results:
+        i+= 1
+        coeffs.append(peak(filter['freq'], filter['q'], filter['gain']))
+        paraEQ[i] = [filtersDict[filter['type']],filter['freq'],filter['gain'],filter['q']]
+    return coeffs,paraEQ
 
 
-def getAllFR(rawiem: str, target: str) -> list:
+def getNewGain(frequencies:list,gains: list, Tgains: list,results:list) -> list:
     # get FR of the iem from a/the txt file
-    frequencies, gains = getFRfromFile(rawiem.replace('.txt', '')+'.txt')
-    valcount = len(frequencies)
+    valcount = len(gains)
 
-    coeffs = getCoeffs(rawiem, target)  # compute the coeffs of the peak EQs
-    # cumpute the gains of the final EQ
+    coeffs,paraEQ = getCoeffsAndPara(results)
+    # compute the coeffs of the peak EQs
+
     deltaGains = calcGains(frequencies, coeffs)
+    # cumpute the gains of the final EQ
     newGains = []
     for i in range(valcount):
         # reshape de final EQ basically
         newGains.append(gains[i]+deltaGains[i])
-
-    Tfrequencies, Tgains = getFRfromFile(
-        target+'.txt', 'targets')  # FR of the target
-
-    return frequencies, gains, newGains, Tgains
+    return newGains,paraEQ

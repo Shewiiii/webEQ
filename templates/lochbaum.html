@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block head%}{% endblock %}
+{% block body%}
+<p>thinking...</p>
+<script src="../static/js/equalizer.js"></script>
+<script>
+    var url = '/resultsLO'
+    var filterCount = {{ filterCount | tojson }};
+    var iemLoch = {{ iemLoch | tojson }};
+    var targetLoch = {{ targetLoch | tojson }};
+    var results = Equalizer.autoeq(iemLoch, targetLoch, filterCount);
+    console.log(filterCount)
+    console.log(results)
+    fetch('/process-data', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ data: results })
+    })
+    window.setTimeout(function(){window.location.href = "/resultsLO";}, 0);
+</script>
+{% endblock %}

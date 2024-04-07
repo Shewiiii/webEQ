@@ -103,6 +103,12 @@ select {
   color: var(--text);
 }
 
+select:disabled {
+  cursor: not-allowed;
+  color: var(--secondary3);
+  background-color: var(--background);
+}
+
 .mainSelect {
   width: 100%;
   min-width: 15ch;
@@ -267,3 +273,8 @@ select {
   width: 100%;
   max-width: 1600px;
 }
+
+.warning {
+  color: #806a22;
+}
+
