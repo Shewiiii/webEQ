@@ -22,7 +22,7 @@ def peak(frequency, q, gain, samplerate=48000):
     return [1.0, a1/a0, a2/a0, b0/a0, b1/a0, b2/a0]
 
 
-def calcGains(frequencies: list, coeffs: list, samplerate=48000):
+def calcGains(frequencies: list, coeffs: list, samplerate=48000) -> list:
 
     valcount = len(frequencies)
     gains = [0]*valcount
@@ -66,4 +66,4 @@ def getNewGain(frequencies:list,gains: list, Tgains: list,results:list) -> list:
     for i in range(valcount):
         # reshape de final EQ basically
         newGains.append(gains[i]+deltaGains[i])
-    return newGains,paraEQ
+    return newGains,paraEQ,deltaGains

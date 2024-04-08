@@ -26,9 +26,10 @@ class EQ():
     gains = []
     Tgains = []
     newGains = []
-    paraEQ = []
-    IIR = []
+    paraEQ = {}
+    IIR = ""
     results = []
+    deltaGains = []
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
@@ -142,7 +143,7 @@ def lochbaum():
 def process_data(): 
     EQ.results = request.json['data'] 
     
-    EQ.newGains,EQ.paraEQ = getNewGain(EQ.frequencies,EQ.gains,EQ.Tgains,EQ.results)
+    EQ.newGains,EQ.paraEQ,EQ.deltaGains = getNewGain(EQ.frequencies,EQ.gains,EQ.Tgains,EQ.results)
 
     EQ.Tgains = normalize(EQ.frequencies, EQ.newGains, EQ.Tgains,at=240)
 
@@ -158,7 +159,10 @@ def results2():
     EQ.IIR = paraToIIR(EQ.paraEQ)
     createParaEQFile(EQ.iem,EQ.target,EQ.paraEQ)
     createPAFile(EQ.iem,EQ.target,EQ.paraEQ)
-    
+    iemAQ = FrequencyResponse(name="temp",frequency=EQ.frequencies,raw=EQ.gains,equalization=EQ.deltaGains)
+    #to create wavelet file
+    createWaveletFile(EQ.iem,EQ.target,iemAQ)
+
     #======return======
     return render_template('index.html',
                         FRList=FRList,
