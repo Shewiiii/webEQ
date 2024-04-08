@@ -12,11 +12,15 @@ from app.computeFilters import getNewGain
 from app.createFiles import *
 from autoeq.frequency_response import FrequencyResponse
 
+
 app = Flask(__name__)
 FRDict = getFRoTList('frequency_responses')
 # dictionnaire avec en clé le model et en valeur le nom du fichier brut
 targetList = list(getFRoTList('targets').keys())
 FRList = list(FRDict.keys())
+
+def gekiyaba(target):
+    return not target in targetList
 
 class EQ():
     iem = ""
@@ -30,6 +34,7 @@ class EQ():
     IIR = ""
     results = []
     deltaGains = []
+    gekiyaba = False
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
@@ -43,6 +48,9 @@ def resultsAQ():
     #======store target an IEM from form======
     EQ.iem = str(request.form.get('iem'))
     EQ.target = str(request.form.get('target'))
+    if EQ.gekiyaba:
+        #check if gekiyaba mode !!! 
+        EQ.target = FRDict[EQ.target]
     print('choix:', EQ.iem, EQ.target)
 
     if EQ.iem == 'None' or EQ.target == 'None':
@@ -57,9 +65,7 @@ def resultsAQ():
     else:
         concha_interference = True
 
-    algorithm = str(request.form.get('algorithm'))
-
-    mode = str(request.form.get('mode')) #Lochbaum or AutoEQ
+    mode = str(request.form.get('mode'))
     if mode == 'standard':
         config = {
             'filters': 
@@ -69,6 +75,7 @@ def resultsAQ():
     elif mode == 'moondrop':
         config = PEQ_CONFIGS['MOONDROP_FREE_DSP']
         filterTypes = ['Peak'] * 9
+
     #======autoEQ======
     EQ.frequencies, \
     EQ.gains, \
@@ -79,7 +86,8 @@ def resultsAQ():
                             EQ.target,\
                             config,\
                             concha_interference,\
-                            filterTypes)
+                            filterTypes,\
+                            EQ.gekiyaba)
 
     EQ.Tgains = normalize(EQ.frequencies, EQ.newGains, EQ.Tgains)
 
@@ -102,19 +110,19 @@ def resultsAQ():
 
 @app.route('/wavelet')
 def wavelet():
-    path = f'generated_files\\{EQ.iem} [{EQ.target}] (Wavelet,Equalizer APO).txt'
+    path = f'generated_files/{EQ.iem} [{EQ.target}] (Wavelet,Equalizer APO).txt'
     return send_file(path, as_attachment=True)
 
 
 @app.route('/poweramp')
 def poweramp():
-    path = f'generated_files\\{EQ.iem} [{EQ.target}] (Poweramp).json'
+    path = f'generated_files/{EQ.iem} [{EQ.target}] (Poweramp).json'
     return send_file(path, as_attachment=True)
 
 
 @app.route('/parametric')
 def parametric():
-    path = f'generated_files\\{EQ.iem} [{EQ.target}] (Parametric EQ).txt'
+    path = f'generated_files/{EQ.iem} [{EQ.target}] (Parametric EQ).txt'
     return send_file(path, as_attachment=True)
 
 
@@ -123,6 +131,11 @@ def lochbaum():
     #======store target an IEM from form======
     EQ.iem = str(request.form.get('iem'))
     EQ.target = str(request.form.get('target'))
+    EQ.gekiyaba =  gekiyaba(EQ.target)
+    if EQ.gekiyaba:
+        #check if gekiyaba mode !!! 
+        EQ.target = FRDict[EQ.target]
+
     print('choix:', EQ.iem, EQ.target)
 
     if EQ.iem == 'None' or EQ.target == 'None':
@@ -134,7 +147,7 @@ def lochbaum():
     filterCount = int(request.form.get('filterCount'))
 
     #======get all data======
-    EQ.frequencies,EQ.gains,EQ.Tgains,iemLoch,targetLoch = getLochbaum(EQ.rawiem,EQ.target)
+    EQ.frequencies,EQ.gains,EQ.Tgains,iemLoch,targetLoch = getLochbaum(EQ.rawiem,EQ.target,EQ.gekiyaba)
 
     #======return======
     return render_template('lochbaum.html',iemLoch=iemLoch,targetLoch=targetLoch,filterCount=filterCount)

@@ -2,7 +2,18 @@
 {% block head%}{% endblock %}
 
 {% block body%}
-<h1>Shewi!</h1>
+<script>
+    function gekiyaba() {
+        document.getElementsByName('secretIem')[0].style.display = 'block';
+        document.getElementsByName('target')[0].style.display = 'none';
+        document.getElementsByName('target')[0].setAttribute("name","a");
+        document.getElementsByName('secretIem')[0].setAttribute("name","target");
+        document.getElementsByName('a')[0].setAttribute("name","secretIem");
+    }
+</script>
+<div id="title" onclick="location.href = '/'">
+    <h1>Shewi!</h1>
+</div>
 {% if result == None %}
 <div class="tout">
     <div id="presentation" class="maindivs">
@@ -80,6 +91,13 @@
             {% endfor %}
         </select>
 
+        <select name="secretIem" class="mainSelect" style="display: none;">
+            <option selected disabled hidden> Choose another device </option>
+            {% for iem in FRList %}
+            <option> {{ iem }} </option>
+            {% endfor %}
+        </select>
+
         <div style="padding-top: 30px;"></div>
         <h4>- Settings -</h4>
         <p>Don't change if you don't know what you are doing !</p>
@@ -126,6 +144,9 @@
         <p id="eqWarningLO" class="warning">Note: Will EQ the resonant peaks if there are. </p>
         <button id="goButton" type="submit" class="generateButton">Go !</button>
     </form>
+    <div id="gekiYabaSecretFeature">
+        <p style="text-align: left;" onclick="gekiyaba()">|∀・)</p>
+    </div>
     <div class='maindivs hint' style="text-align: left;">
         <h4 style="margin: 0;">Hint:</h4>
         <h5>- Headphones -</h5>
@@ -144,16 +165,19 @@
             -0.8dB/oct.</p>
         <p><strong>Number of filters</strong>: as the name suggests.</p>
         <p><strong>3kHz dip</strong>: Reduce the volume of the ear-gain if it sounds too shouty.</p>
-        <p><strong>EQ the resonant peaks</strong>: Sometimes on the graph you can see a dip around 9kHz and a peak at around 7kHz. That is due to
+        <p><strong>EQ the resonant peaks</strong>: Sometimes on the graph you can see a dip around 9kHz and a peak at
+            around 7kHz. That is due to
             the IEM or TWS interacting more at a certain frequency with the measurement rig. Thus, EQing this region can
             lead to an inaccurate equalization (if that dip is caused by resonance). Disabling this option can help
             preventing that.</p>
         <p><strong>Algorithm</strong>: algorithm to use to generate the EQ.</p>
-            <ul>
-                <li>Lochbaum: Aggressive EQ. Match the target better on the full frequency range.</li>
-                <li>Default (from AutoEQ's library): Safer EQ. Fast and more customizability, but less precise 10kHz. Will not EQ the resonant peaks by default.</li>
-                <p><strong>Tip !</strong>: try to EQ with different algorithm and number of filters if the EQ you get doesn't satisfy you.</p>
-            </ul>
+        <ul>
+            <li>Lochbaum: Aggressive EQ. Match the target better on the full frequency range.</li>
+            <li>Default (from AutoEQ's library): Safer EQ. Fast and more customizability, but less precise 10kHz. Will
+                not EQ the resonant peaks by default.</li>
+            <p><strong>Tip !</strong>: try to EQ with different algorithm and number of filters if the EQ you get
+                doesn't satisfy you.</p>
+        </ul>
         <p><strong>Mode</strong>: Adapt the generated EQ to a particular device. Can overwrite other options.</p>
     </div>
     <div style="padding-top: 50px;"></div>
@@ -301,6 +325,7 @@
         var copyText = document.getElementById('iir').dataset.iir
         navigator.clipboard.writeText(copyText);
     }
+
 
     const myChart = document.getElementById('myChart').getContext("2d");
 

@@ -6,9 +6,12 @@ from app.cleanData import normalize
 # iem = 'Apple AirPods Pro 2'
 # target = 'Shewi Target'
 
-def getLochbaum(rawiem,target):
-    frequencies,gains = getFRfromFile(f'{rawiem}.txt',relativepath='frequency_responses')    
-    Tfrequencies,Tgains = getFRfromFile(f'{target}.txt',relativepath='targets') 
+def getLochbaum(rawiem,target,gekiyaba):
+    frequencies,gains = getFRfromFile(f'{rawiem}.txt',relativepath='frequency_responses')
+    if gekiyaba:
+        Tfrequencies,Tgains = getFRfromFile(f'{target}.txt',relativepath='frequency_responses')
+    else: 
+        Tfrequencies,Tgains = getFRfromFile(f'{target}.txt',relativepath='targets') 
 
     iemAQ = FrequencyResponse(name=rawiem,frequency=frequencies,raw=gains)
     targetAQ = FrequencyResponse(name=target,frequency=Tfrequencies,raw=Tgains)

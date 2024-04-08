@@ -10,10 +10,13 @@ from app.createFiles import *
 
 
     
-def autoEQ(iem:str,target:str,config,concha_interference,filterTypes,upshift:int=60):
+def autoEQ(iem:str,target:str,config,concha_interference,filterTypes,gekiyaba,upshift:int=60):
     FRList = getFRoTList('frequency_responses')
-    frequencies,gains = getFRfromFile(f'{FRList[iem]}.txt',relativepath='frequency_responses')    
-    Tfrequencies,Tgains = getFRfromFile(f'{target}.txt',relativepath='targets')
+    frequencies,gains = getFRfromFile(f'{FRList[iem]}.txt',relativepath='frequency_responses') 
+    if gekiyaba:   
+        Tfrequencies,Tgains = getFRfromFile(f'{target}.txt',relativepath='frequency_responses')
+    else:
+        Tfrequencies,Tgains = getFRfromFile(f'{target}.txt',relativepath='targets')
 
     iemAQ = FrequencyResponse(name=iem,frequency=frequencies,raw=gains)
     targetAQ = FrequencyResponse(name=target,frequency=Tfrequencies,raw=Tgains)
