@@ -15,6 +15,8 @@
   --select-arrow: var(--select-border);
   --red: #FFBFBF;
   --infos: #201f35;
+  --purple: #8757ca;
+  --dark-purple: #3d255f;
 }
 
 body {
@@ -289,4 +291,15 @@ select:disabled {
   user-select: none;
 }
 
- 
+.rcomment {
+  max-width: 400px;
+  margin: auto;
+}
+
+.black {
+  color: var(--purple);
+}
+
+.link:hover {
+  color: var(--dark-purple);
+}

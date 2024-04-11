@@ -6,9 +6,13 @@
     function gekiyaba() {
         document.getElementsByName('secretIem')[0].style.display = 'block';
         document.getElementsByName('target')[0].style.display = 'none';
-        document.getElementsByName('target')[0].setAttribute("name","a");
-        document.getElementsByName('secretIem')[0].setAttribute("name","target");
-        document.getElementsByName('a')[0].setAttribute("name","secretIem");
+        document.getElementsByName('target')[0].setAttribute("name", "a");
+        document.getElementsByName('secretIem')[0].setAttribute("name", "target");
+        document.getElementsByName('a')[0].setAttribute("name", "secretIem");
+    }
+
+    function listener() {
+        document.getElementById('listener').style.display = 'block'
     }
 </script>
 <div id="title" onclick="location.href = '/'">
@@ -64,7 +68,12 @@
         <div class="buttons">
             <a href="{{url_for('wavelet')}}" download='test' class=" dl">Export to Wavelet/EQapo</a>
             <a href="{{url_for('poweramp')}}" download='test' class="dl">Export to Poweramp</a>
-            <a href="{{url_for('parametric')}}" download='test' class="dl">Download Parametric EQ</a>
+            <a href="{{url_for('parametric')}}" download='test' class="dl" onclick="listener()">Download Parametric
+                EQ</a>
+            <p id="listener" class="r rcomment" style="display: none;">You probably want to check <a class="link black" href="https://listener800.github.io/5128"
+                    target="_blank">Listener's graph database</a> and the <a class="link black"
+                    href="https://github.com/Shewiiii/webEQ/tree/main/frequency_responses" target="_blank">FR folder</a>
+                if you want to make more adjustments ! (you should)</p>
             <a onclick="iircopy()" class="dl" id="iir" data-iir="{{ iir }}">Copy IIR string</a>
         </div>
     </div>
@@ -100,7 +109,6 @@
 
         <div style="padding-top: 30px;"></div>
         <h4>- Settings -</h4>
-        <p>Don't change if you don't know what you are doing !</p>
         <div class="flexThing EQoptions">
             <div class="EQoption">
                 <p>Max number of filters:</p>
@@ -116,17 +124,17 @@
             <div class="EQoption">
                 <p>AutoEQ algorithm</p>
                 <select name="algorithm" class="optionSelect">
-                    <option selected="selected" value="lochbaum"> Lochbaum </option>
-                    <option value="default"> Default </option>
+                    <option selected="selected" value="default"> Default </option>
+                    <option value="lochbaum"> Lochbaum </option>
                 </select>
-                <p class="idkSelect">Default: Lochbaum</p>
+                <p class="idkSelect">Default: Default</p>
             </div>
 
             <div class="EQoption">
                 <p>EQ the resonant peaks:</p>
                 <select name="EQres" class="optionSelect">
-                    <option selected="selected" value="yes"> Yes </option>
-                    <option value="no"> No </option>
+                    <option value="yes"> Yes </option>
+                    <option selected="selected" value="no"> No </option>
                 </select>
                 <p class="idkSelect">Recommended: No</p>
             </div>
@@ -140,8 +148,10 @@
                 <p class="idkSelect">Default: Standard</p>
             </div>
         </div>
-        <p id="eqWarningAQ" class="warning" style="display: none;">Note: EQ can be less accurate above above 10kHz. </p>
-        <p id="eqWarningLO" class="warning">Note: Will EQ the resonant peaks if there are. </p>
+        <p id="eqWarningAQ" class="warning" style="display: none;">Note: Will less EQ above 10kHz to avoid inaccuracies
+            (that's a feature). </p>
+        <p id="eqWarningLO" class="warning">Note: Will EQ the resonant peaks if there are. Make sure to adjust the
+            treble by ear ! </p>
         <button id="goButton" type="submit" class="generateButton">Go !</button>
     </form>
     <div id="gekiYabaSecretFeature">
@@ -154,7 +164,8 @@
         <p><strong>5128 DF</strong>: Neutral for Headphones</p>
         <h5>- IEMs or TWS -</h5>
         <p><strong>SoundGuys Target</strong>: Nice balance between neutral and fun (recommended)</p>
-        <p><strong>Shewi Target</strong>: U-Shaped Target focused on macro-dynamics and immersiveness. My go-to
+        <p><strong>Shewi Target</strong>: Basically a U6T without that treble zing. U-Shaped Target focused on
+            macro-dynamics and immersiveness. My go-to
             sound profile
         </p>
         <p><strong>JM-1</strong>: Neutral for IEMs</p>
@@ -172,8 +183,10 @@
             preventing that.</p>
         <p><strong>Algorithm</strong>: algorithm to use to generate the EQ.</p>
         <ul>
-            <li>Lochbaum: Aggressive EQ. Match the target better on the full frequency range.</li>
-            <li>Default (from AutoEQ's library): Safer EQ. Fast and more customizability, but less precise 10kHz. Will
+            <li>Lochbaum: Aggressive EQ. Match the target better on the full frequency range. Could potentially heavely
+                EQ peaks or dips you don't actually hear, so use it with care.</li>
+            <li>Default (from AutoEQ's library): Safer EQ. Fast and more customizability, and don't EQ too much above
+                10kHz. Will
                 not EQ the resonant peaks by default.</li>
             <p><strong>Tip !</strong>: try to EQ with different algorithm and number of filters if the EQ you get
                 doesn't satisfy you.</p>
@@ -199,12 +212,13 @@
                 href="https://www.reddit.com/r/headphones/comments/1780005/bk_5128_graph_database/" target="_blank">this
                 amazing reddit post</a> to help me scrap the frequency responses.
         </p>
-        <h4>How these EQ profiles have been generated</h4>
-        <p>All the EQ profiles on this website have been generated using the AutoEQ feature (not the project) available
+        <h4>How these EQ profiles are generated</h4>
+        <p>All the EQ profiles on this website are generated using the AutoEQ Python library by Jaakko Pasanen, and the
+            AutoEQ feature available
             on many graph tools like <a class="link" href="https://squig.link/" target="_blank">Squiglink</a>, <a
                 class="link" href="https://listener800.github.io/5128" target="_blank">Listener's graph database</a> or
             <a class="link" href="https://crinacle.com/graphs/iems/graphtool/" target="_blank">Crinacle's IEF graph
-                tool</a>.
+                tool</a> by Marshall Lochbaum.
         </p>
         <p> They are all based on <strong>measurements took on the B&K 5128</strong> or the 4620 (without the head and
             torso), the most

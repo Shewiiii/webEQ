@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, send_file, redirect, jsonify 
+from flask import Flask, render_template, request, send_file, redirect
 from app.getFRoT import getFRoTList
 from app.getEQ import getParaEQ, getIIRString
 from app.computeFilters import getNewGain
@@ -11,9 +11,11 @@ from app.lochbaumEQ import getLochbaum
 from app.computeFilters import getNewGain
 from app.createFiles import *
 from autoeq.frequency_response import FrequencyResponse
-
+from app.config import Config
 
 app = Flask(__name__)
+app.config.from_object(Config)
+
 FRDict = getFRoTList('frequency_responses')
 # dictionnaire avec en clé le model et en valeur le nom du fichier brut
 targetList = list(getFRoTList('targets').keys())
@@ -48,6 +50,7 @@ def resultsAQ():
     #======store target an IEM from form======
     EQ.iem = str(request.form.get('iem'))
     EQ.target = str(request.form.get('target'))
+    EQ.gekiyaba =  gekiyaba(EQ.target)
     if EQ.gekiyaba:
         #check if gekiyaba mode !!! 
         EQ.target = FRDict[EQ.target]
