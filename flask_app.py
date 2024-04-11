@@ -11,7 +11,6 @@ from app.lochbaumEQ import getLochbaum
 from app.computeFilters import getNewGain
 from app.createFiles import *
 from autoeq.frequency_response import FrequencyResponse
-from app.config import Config
 
 app = Flask(__name__)
 app.config.from_object(Config)
