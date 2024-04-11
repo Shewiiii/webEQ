@@ -13,7 +13,6 @@ from app.createFiles import *
 from autoeq.frequency_response import FrequencyResponse
 
 app = Flask(__name__)
-app.config.from_object(Config)
 
 FRDict = getFRoTList('frequency_responses')
 # dictionnaire avec en clé le model et en valeur le nom du fichier brut
