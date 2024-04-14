@@ -53,7 +53,7 @@ def getCoeffsAndPara(results) -> list:
     return coeffs,paraEQ
 
 
-def getNewGain(frequencies:list,gains: list, Tgains: list,results:list) -> list:
+def getNewGain(frequencies:list,gains: list,results:list) -> tuple[list,list,list]:
     # get FR of the iem from a/the txt file
     valcount = len(gains)
 

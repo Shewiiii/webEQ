@@ -2,8 +2,8 @@ from os import listdir, path
 import pathlib
 
 
-def getFRoTList(relativepath: str) -> dict:
-    path = pathlib.Path(__file__).parents[1] / relativepath
+def getFRoTList(relativePath: str) -> dict:
+    path = pathlib.Path(__file__).parents[1] / relativePath
     templist = listdir(path)
     templist.sort()
     dico = {}

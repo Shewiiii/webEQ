@@ -20,7 +20,7 @@ iemAQ.interpolate()
 iemAQ.center()
 iemAQ.compensate(targetAQ)
 iemAQ.smoothen()
-iemAQ.equalize(concha_interference=True,treble_f_lower=15000,treble_f_upper=20001,max_gain=10)
+iemAQ.equalize(concha_interference=True,max_gain=10)
 
 peqs = iemAQ.optimize_parametric_eq({'filters': [{'type': 'HIGH_SHELF','fc': 10000.0,'q': 0.7}]+[{'type': 'PEAKING'}] * 10}, 48000)
 i = 0

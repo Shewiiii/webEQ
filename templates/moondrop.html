@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block head%}{% endblock %}
+
+{% block body%}
+<div class="maindivs">
+    <h2>Make your EQ work in the Moondrop app !</h2>
+    <form method="POST" action="{{ url_for('moondrop') }}" enctype="multipart/form-data">
+        <input class="ok" type="file" name="file">
+        <button class="op">Submit</button>
+</div>
+{% endblock %}

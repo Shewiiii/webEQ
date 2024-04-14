@@ -1,6 +1,5 @@
 from flask import Flask, render_template, request, send_file, redirect
 from app.getFRoT import getFRoTList
-from app.getEQ import getParaEQ, getIIRString
 from app.computeFilters import getNewGain
 from app.cleanData import normalize
 from app.dynamicAutoEQ import autoEQ
@@ -8,8 +7,8 @@ from fractions import Fraction
 from app.getFRfromFile import *
 from autoeq.constants import PEQ_CONFIGS
 from app.lochbaumEQ import getLochbaum
-from app.computeFilters import getNewGain
 from app.createFiles import *
+from app.getEQ import getParaEQ2
 from autoeq.frequency_response import FrequencyResponse
 
 app = Flask(__name__)
@@ -157,7 +156,7 @@ def lochbaum():
 def process_data(): 
     EQ.results = request.json['data'] 
     
-    EQ.newGains,EQ.paraEQ,EQ.deltaGains = getNewGain(EQ.frequencies,EQ.gains,EQ.Tgains,EQ.results)
+    EQ.newGains,EQ.paraEQ,EQ.deltaGains = getNewGain(EQ.frequencies,EQ.gains,EQ.results)
 
     EQ.Tgains = normalize(EQ.frequencies, EQ.newGains, EQ.Tgains,at=240)
 
@@ -193,7 +192,51 @@ def results2():
                         Tgains=EQ.Tgains
                         )
 
+@app.route('/moondrop', methods=['GET','POST'])
+def moondrop():
+    if request.method == 'POST':   
+        f = request.files['file'] 
+        path = f'uploads/{f.filename}'
+        f.save(path)
+        results = getParaEQ2(path)
 
+        frequencies = list(FrequencyResponse(name='temp').frequency)
+        #len: 695
+        gains = [60.0]*695
+        newGains,paraEQ,deltaGains = getNewGain(frequencies,gains,results)
+        base = FrequencyResponse(name='idk',frequency=frequencies,raw=gains)
+        base.interpolate()
+        base.center()
+        target = FrequencyResponse(name='uwu',frequency=frequencies,raw=newGains)
+        base.compensate(target)
+        base.equalize()
+
+        config = {
+        'optimizer': {
+            'min_std': 0.008
+        },
+        'filters': [{
+            'type': 'PEAKING',
+            'min_q': 0.5,
+            'max_q': 6.0,
+            'min_fc': 40.0,
+            'max_fc': 20000.0,
+            'min_gain': -12.0,
+            'max_gain': 3.0,
+        }] * 9
+        }   
+        peqs = base.optimize_parametric_eq(config,44100)[0].filters
+        
+        string = ''
+        i = 0
+        for filt in peqs:
+            i += 1
+            string += f'Filter {i}: ON PK Fc {int(filt.fc)} Hz Gain {round(filt.gain,1)} dB Q {round(filt.q,1)}\n'
+        path = f'generated_files/{f.filename}'
+        open(path,'w').write(string)
+        return send_file(path, as_attachment=True)
+
+    return render_template('moondrop.html')
 
 
 if __name__ == "__main__":
