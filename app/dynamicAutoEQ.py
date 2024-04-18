@@ -32,13 +32,13 @@ def autoEQ(iem:str,target:str,config,concha_interference,filterTypes,gekiyaba,up
     targetAQ.smoothen()
 
     peqs = iemAQ.optimize_parametric_eq(config, 44100)
-    #generate paraEQ filters
+    #generate results (parametric) filters
     i = 0
-    paraEQ = {}
+    restults = []
     for filt in peqs[0].filters:
-        paraEQ[i] = [filterTypes[i],round(filt.fc),round(filt.gain,1),round(filt.q,1)]
+        restults.append({'type':filterTypes[i],'freq':round(filt.fc),'q':round(filt.q,1),'gain':round(filt.gain,1)})
         i+=1
-        #{1: [frequency,gain,q]}
+        #[{'type':'PK','freq':20.0,'q':1.0,'gain':3.0}]
 
     frequencies = list(iemAQ.frequency)
     gains = list(iemAQ.raw)
@@ -54,10 +54,10 @@ def autoEQ(iem:str,target:str,config,concha_interference,filterTypes,gekiyaba,up
 
     Tgains = normalize(frequencies,idealGains,Tgains)
     #generate IIR string
-    IIRstring = paraToIIR(paraEQ)
+    IIRstring = paraToIIR(restults)
     #Create files
-    createParaEQFile(iem,target,paraEQ)
-    createPAFile(iem,target,paraEQ)
+    createParaEQFile(iem,target,restults)
+    createPAFile(iem,target,restults)
     createWaveletFile(iem,target,iemAQ)
     
-    return frequencies, gains, newGains, Tgains, paraEQ, IIRstring
+    return frequencies, gains, newGains, Tgains, restults, IIRstring

@@ -29,9 +29,8 @@ class EQ():
     gains = []
     Tgains = []
     newGains = []
-    paraEQ = {}
-    IIR = ""
     results = []
+    IIR = ""
     deltaGains = []
     gekiyaba = False
 
@@ -71,17 +70,17 @@ def resultsAQ():
             'filters': 
             [{'type': 'LOW_SHELF','fc': 105.0},{'type': 'HIGH_SHELF','fc': 10000.0}]+
             [{'type': 'PEAKING'}] * (filterCount-2)}
-        filterTypes = ['LShelf','HShelf'] + ['Peak'] * (filterCount-2)
+        filterTypes = ['LSQ','HSC'] + ['PK'] * (filterCount-2)
     elif mode == 'moondrop':
         config = PEQ_CONFIGS['MOONDROP_FREE_DSP']
-        filterTypes = ['Peak'] * 9
+        filterTypes = ['PK'] * 9
 
     #======autoEQ======
     EQ.frequencies, \
     EQ.gains, \
     EQ.newGains, \
     EQ.Tgains, \
-    EQ.paraEQ, \
+    EQ.results, \
     EQ.IIR = autoEQ(EQ.iem,\
                             EQ.target,\
                             config,\
@@ -96,7 +95,7 @@ def resultsAQ():
                         FRList=FRList,
                         targetList=targetList,
                         result="aouiiii",
-                        paraEQ=EQ.paraEQ,
+                        results=EQ.results,
                         iem=EQ.iem,
                         target=EQ.target,
                         iir=EQ.IIR, \
@@ -156,8 +155,7 @@ def lochbaum():
 def process_data(): 
     EQ.results = request.json['data'] 
     
-    EQ.newGains,EQ.paraEQ,EQ.deltaGains = getNewGain(EQ.frequencies,EQ.gains,EQ.results)
-
+    EQ.newGains,EQ.deltaGains = getNewGain(EQ.frequencies,EQ.gains,EQ.results)
     EQ.Tgains = normalize(EQ.frequencies, EQ.newGains, EQ.Tgains,at=240)
 
     #======return======
@@ -166,12 +164,12 @@ def process_data():
 
 @app.route('/resultsLO')
 def results2():
-    print(EQ.paraEQ)
+    print(EQ.results)
 
     #======get all data======
-    EQ.IIR = paraToIIR(EQ.paraEQ)
-    createParaEQFile(EQ.iem,EQ.target,EQ.paraEQ)
-    createPAFile(EQ.iem,EQ.target,EQ.paraEQ)
+    EQ.IIR = paraToIIR(EQ.results)
+    createParaEQFile(EQ.iem,EQ.target,EQ.results)
+    createPAFile(EQ.iem,EQ.target,EQ.results)
     iemAQ = FrequencyResponse(name="temp",frequency=EQ.frequencies,raw=EQ.gains,equalization=EQ.deltaGains)
     #to create wavelet file
     createWaveletFile(EQ.iem,EQ.target,iemAQ)
@@ -181,7 +179,7 @@ def results2():
                         FRList=FRList,
                         targetList=targetList,
                         result="aouiiii",
-                        paraEQ=EQ.paraEQ,
+                        results=EQ.results,
                         iem=EQ.iem,
                         target=EQ.target,
                         iir=EQ.IIR, \
@@ -203,7 +201,7 @@ def moondrop():
         frequencies = list(FrequencyResponse(name='temp').frequency)
         #len: 695
         gains = [60.0]*695
-        newGains,paraEQ,deltaGains = getNewGain(frequencies,gains,results)
+        newGains,deltaGains = getNewGain(frequencies,gains,results)
         base = FrequencyResponse(name='idk',frequency=frequencies,raw=gains)
         base.interpolate()
         base.center()

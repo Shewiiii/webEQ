@@ -52,12 +52,12 @@
                     <th>Gain</th>
                     <th>Q Value</th>
                 </tr>
-                {% for keys in paraEQ %}
+                {% for para in results %}
                 <tr>
-                    <th>{{ paraEQ[keys][0] }}</th>
-                    <th>{{ paraEQ[keys][1] }}</th>
-                    <th>{{ paraEQ[keys][2] }}</th>
-                    <th>{{ paraEQ[keys][3] }}</th>
+                    <th>{{ para['type'] }}</th>
+                    <th>{{ para['freq'] }}</th>
+                    <th>{{ para['gain'] }}</th>
+                    <th>{{ para['q'] }}</th>
                 </tr>
                 {% endfor %}
             </table>

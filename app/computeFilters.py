@@ -40,24 +40,19 @@ def calcGains(frequencies: list, coeffs: list, samplerate=48000) -> list:
     return gains
 
 
-def getCoeffsAndPara(results) -> list:
+def getCoeffs(results) -> list:
     #results example: [{'type': 'PK', 'freq': 20, 'q': 0.7, 'gain': -4.6},...]
     coeffs = []
-    paraEQ = {}
-    i = 0
-    filtersDict = {"PK":"Peak","LSC":"LShelf","HSC":"HShelf"}
     for filter in results:
-        i+= 1
         coeffs.append(peak(filter['freq'], filter['q'], filter['gain']))
-        paraEQ[i] = [filtersDict[filter['type']],filter['freq'],filter['gain'],filter['q']]
-    return coeffs,paraEQ
+    return coeffs
 
 
 def getNewGain(frequencies:list,gains: list,results:list) -> tuple[list,list,list]:
     # get FR of the iem from a/the txt file
     valcount = len(gains)
 
-    coeffs,paraEQ = getCoeffsAndPara(results)
+    coeffs = getCoeffs(results)
     # compute the coeffs of the peak EQs
 
     deltaGains = calcGains(frequencies, coeffs)
@@ -66,4 +61,4 @@ def getNewGain(frequencies:list,gains: list,results:list) -> tuple[list,list,lis
     for i in range(valcount):
         # reshape de final EQ basically
         newGains.append(gains[i]+deltaGains[i])
-    return newGains,paraEQ,deltaGains
+    return newGains,deltaGains
