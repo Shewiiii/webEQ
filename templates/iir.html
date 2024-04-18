@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block head%}{% endblock %}
+
+{% block body%}
+<div class="maindivs alt">
+    <h2>Make your EQ work in HQplayer 4 and 5 !</h2>
+    <form method="POST" action="{{ url_for('iir') }}" enctype="multipart/form-data">
+        <input class="ok" type="file" name="file">
+        <button class="op">Submit</button>
+        {% if result != None %}
+        <div style="padding-top: 50px;"></div>
+        <textarea readonly>{{ string }}</textarea>
+        <div style="padding-top: 50px;"></div>
+        <a onclick="iircopy()" class="iirCopy" id="iir" data-iir="{{ string }}">Copy IIR string</a>
+        {% endif %}
+</div>
+<script>
+    function iircopy() {
+        var copyText = document.getElementById('iir').dataset.iir
+        navigator.clipboard.writeText(copyText);
+    }</script>
+{% endblock %}

@@ -6,6 +6,7 @@
   --primary: #6356c8;
   --secondary: #7b71cc;
   --secondary2: #161521;
+  --secondary2b: #1e1c2b;
   --secondary3: #2d2b41;
   --secondary4: #322E4F; /*bouton2 */
   --accent: #513ac5;
@@ -17,6 +18,9 @@
   --infos: #201f35;
   --purple: #8757ca;
   --dark-purple: #3d255f;
+  --pink: #d5a4f1;
+  --purple2: #52387c;
+
 }
 
 body {
@@ -84,6 +88,10 @@ h5 {
   margin: auto;
   text-align: center;
   
+}
+
+.alt {
+  background-color: var(--secondary2b);
 }
 
 *,
@@ -210,6 +218,33 @@ select:disabled {
   background-color: var(--secondary4);
 }
 
+.iirCopy {
+  box-sizing: border-box;
+  appearance: none;
+  background-color: var(--title);
+  border-radius: 30px;
+  color: var(--secondary2);
+  cursor: pointer;
+  display: flex;
+  align-self: center;
+  font-size: 17px;
+  padding: 17px;
+  text-decoration: none;
+  text-align: center;
+  font-weight: 700;
+  transition-property: color,background-color;
+  transition-duration: 0.2s;
+  font-family: Segoe UI Semibold;
+  display: inline-block;
+  margin: 20px;
+  width: 100%;
+  max-width: 300px;
+}
+
+.iirCopy:hover {
+  background-color: var(--pink);
+}
+
 .flexThing {
   padding: auto;
   display: flex;
@@ -302,4 +337,18 @@ select:disabled {
 
 .link:hover {
   color: var(--dark-purple);
+}
+
+
+textarea {
+  width: 100%;
+  height: 150px;
+  padding: 12px 20px;
+  box-sizing: border-box;
+  border: 2px solid var(--pink);
+  color: var(--text);
+  border-radius: 4px;
+  background-color: var(--secondary2);
+  font-size: 16px;
+  resize: none;
 }

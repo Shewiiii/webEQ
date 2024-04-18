@@ -236,6 +236,18 @@ def moondrop():
 
     return render_template('moondrop.html')
 
+@app.route('/iir', methods=['GET','POST'])
+def iir():
+    result = None
+    string = ''
+    if request.method == 'POST':   
+        f = request.files['file'] 
+        path = f'uploads/{f.filename}'
+        f.save(path)
+        results = getParaEQ2(path)
+        string = paraToIIR(results)
+        result = 'aouiiiiii'
+    return render_template('iir.html',result=result,string=string)
 
 if __name__ == "__main__":
     app.run(debug=True)
