@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, send_file, redirect
-from app.getFRoT import getFRoTList
+from app.getFRoT import getFRoTDict
 from app.computeFilters import getNewGain
 from app.cleanData import normalize
 from app.dynamicAutoEQ import autoEQ
@@ -13,9 +13,9 @@ from autoeq.frequency_response import FrequencyResponse
 
 app = Flask(__name__)
 
-FRDict = getFRoTList('frequency_responses')
+FRDict = getFRoTDict('frequency_responses')
 # dictionnaire avec en clé le model et en valeur le nom du fichier brut
-targetList = list(getFRoTList('targets').keys())
+targetList = list(getFRoTDict('targets').keys())
 FRList = list(FRDict.keys())
 
 def gekiyaba(target):

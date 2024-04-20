@@ -1,7 +1,5 @@
 from app.getFRfromFile import *
-from app.getFRoT import getFRoTList
 from autoeq.frequency_response import FrequencyResponse
-from app.cleanData import normalize
 
 # iem = 'Apple AirPods Pro 2'
 # target = 'Shewi Target'

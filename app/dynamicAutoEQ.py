@@ -1,7 +1,7 @@
 from autoeq.frequency_response import FrequencyResponse
 from autoeq.constants import PEQ_CONFIGS
 from pathlib import Path
-from app.getFRoT import getFRoTList
+from app.getFRoT import getFRoTDict
 from app.getFRfromFile import *
 from random import randint
 from app.computeFilters import *
@@ -11,7 +11,7 @@ from app.createFiles import *
 
     
 def autoEQ(iem:str,target:str,config,concha_interference,filterTypes,gekiyaba,upshift:int=60):
-    FRList = getFRoTList('frequency_responses')
+    FRList = getFRoTDict('frequency_responses')
     frequencies,gains = getFRfromFile(f'{FRList[iem]}.txt',relativepath='frequency_responses') 
     if gekiyaba:   
         Tfrequencies,Tgains = getFRfromFile(f'{target}.txt',relativepath='frequency_responses')

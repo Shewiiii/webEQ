@@ -2,7 +2,7 @@ from os import listdir, path
 import pathlib
 
 
-def getFRoTList(relativePath: str) -> dict:
+def getFRoTDict(relativePath: str) -> dict:
     path = pathlib.Path(__file__).parents[1] / relativePath
     templist = listdir(path)
     templist.sort()

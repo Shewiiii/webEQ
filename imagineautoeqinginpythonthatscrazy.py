@@ -1,12 +1,12 @@
 from autoeq.frequency_response import FrequencyResponse
 from autoeq.constants import PEQ_CONFIGS
 import pathlib
-from app.getFRoT import getFRoTList
+from app.getFRoT import getFRoTDict
 from app.getFRfromFile import *
 from numpy import array
 #def...
 
-FRlist = getFRoTList('frequency_responses')
+FRlist = getFRoTDict('frequency_responses')
 target = 'Shewi Target'
 iem = '64 audio Völour (m15)'
 
