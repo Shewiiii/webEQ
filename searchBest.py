@@ -2,19 +2,39 @@ from app.getFRoT import *
 from app.getFRfromFile import *
 from app.cleanData import cleanData
 import matplotlib.pyplot as plt
+import math
 
 headphones = ['Audeze', 'Hifiman', 'Bose', 'HyperX',
               'Sennheiser HD', 'Sennheiser HE-1', 'Sony WH', 'AKG', 'Focal', 'Logitech', 'Beyerdynamic', 'Project', 'nodip']
 
-
 class Constants:
-    coeffs = [1, 3, 5, 2]
+    coeffs = [1, 4, 3, 2]
     listLength = 695
     bassBounds = [20, 100]
     bounds = [100, 3000]
     upperBounds = [3000, 7000]
     trebleBounds = [9000, 20000]
     excludeHeadphones = True
+
+
+def rmsValue(arr):
+    m = len(arr)
+    #source: https://www.geeksforgeeks.org/program-to-calculate-root-mean-square/
+    square = 0
+    mean = 0.0
+    root = 0.0
+     
+    #Calculate square
+    for i in range(0,m):
+        square += (arr[i]**2)
+     
+    #Calculate Mean 
+    mean = (square / (float)(m))
+     
+    #Calculate Root
+    root = math.sqrt(mean)
+     
+    return root
 
 def isHeadphone(device: str):
     for headphone in headphones:
@@ -33,28 +53,28 @@ def getScore(device: str, target: list, to100: bool = True, coeffs: list = Const
     frequencies, gains = cleanData(fr[0], fr[1])
     Tfrequencies, Tgains = cleanData(t[0], t[1])
 
-    score = 0
-    n = 0
+    scoresBass = []
+    scoresMid = []
+    scoresUMid = []
+    scoresTreble = []
+
     for i in range(listLength):
         # check if in bounds
         # coeffs: [coef bass, coef mid, coef treble]
 
         if bassBounds[0] < frequencies[i] <= bassBounds[1]:
-            score += abs(Tgains[i]-gains[i])*coeffs[0]
-            n += 1
+            scoresBass.append(abs(Tgains[i]-gains[i]))
+    
         if bounds[0] <= frequencies[i] <= bounds[1]:
-            score += abs(Tgains[i]-gains[i])*coeffs[1]
-            n += 1
+            scoresMid.append(abs(Tgains[i]-gains[i]))
 
         if upperBounds[0] <= frequencies[i] <= upperBounds[1]:
-            score += abs(Tgains[i]-gains[i])*coeffs[2]
-            n += 1
+            scoresUMid.append(abs(Tgains[i]-gains[i]))
 
         if trebleBounds[0] < frequencies[i] <= trebleBounds[1]:
-            score += abs(Tgains[i]-gains[i])*coeffs[3]
-            n += 1
+            scoresTreble.append(abs(Tgains[i]-gains[i]))
 
-    AVGscore = score/n
+    AVGscore = (rmsValue(scoresBass)*coeffs[0]+rmsValue(scoresMid)*coeffs[1]+rmsValue(scoresUMid)*coeffs[2]+rmsValue(scoresTreble)*coeffs[3])/4
     if to100:
         AVGscore = round(100/AVGscore, 2)
         return AVGscore
