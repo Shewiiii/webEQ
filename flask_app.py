@@ -1,7 +1,6 @@
 from flask import Flask, render_template, request, send_file, redirect
 from app.getFRoT import getFRoTDict
 from app.computeFilters import getNewGain
-from app.cleanData import normalize
 from app.dynamicAutoEQ import autoEQ
 from fractions import Fraction
 from app.getFRfromFile import *
@@ -88,7 +87,6 @@ def resultsAQ():
                             filterTypes,\
                             EQ.gekiyaba)
 
-    EQ.Tgains = normalize(EQ.frequencies, EQ.newGains, EQ.Tgains)
 
     #======return======
     return render_template('index.html',
@@ -156,7 +154,6 @@ def process_data():
     EQ.results = request.json['data'] 
     
     EQ.newGains,EQ.deltaGains = getNewGain(EQ.frequencies,EQ.gains,EQ.results)
-    EQ.Tgains = normalize(EQ.frequencies, EQ.newGains, EQ.Tgains,at=240)
 
     #======return======
     return redirect("/resultsLO")
