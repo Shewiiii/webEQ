@@ -6,15 +6,16 @@ import matplotlib.pyplot as plt
 headphones = ['Audeze', 'Hifiman', 'Bose', 'HyperX',
               'Sennheiser HD', 'Sennheiser HE-1', 'Sony WH', 'AKG', 'Focal', 'Logitech', 'Beyerdynamic', 'Project', 'nodip']
 
+
 class Constants:
     coeffs = [1, 4, 4, 2]
     listLength = 695
-    normalizeAt = 393
     bassBounds = [20, 100]
     bounds = [100, 3000]
     upperBounds = [3000, 7000]
     trebleBounds = [9000, 17000]
     excludeHeadphones = True
+
 
 def isHeadphone(device: str):
     for headphone in headphones:
@@ -30,10 +31,9 @@ def getScore(device: str, target: list, to100: bool = True, coeffs: list = Const
     t = getFRfromFile(target.replace('.txt', ''), 'targets')
     # t (target): ([frequency],[gain])
 
-    frequencies, gains = cleanData(fr[0], fr[1])
-    Tfrequencies, Tgains = cleanData(t[0], t[1])
-    Tgains = normalize(frequencies,gains,Tgains,at=Constants.normalizeAt)
-    
+    frequencies, gains = cleanData(fr[0], fr[1], upshift=0)
+    Tfrequencies, Tgains = cleanData(t[0], t[1], upshift=0)
+
     score = 0
     n = 0
     for i in range(listLength):
@@ -61,7 +61,8 @@ def getScore(device: str, target: list, to100: bool = True, coeffs: list = Const
         return AVGscore
     return round(AVGscore, 2)
 
-def findClosestToTarget(target: str, to100: bool = False,coeffs: list = Constants.coeffs, bounds: list = Constants.bounds, upperBounds: list = Constants.upperBounds, bassBounds: list = Constants.bassBounds, trebleBounds: list = Constants.trebleBounds, excludeHeadphones: bool = Constants.excludeHeadphones) -> list:
+
+def findClosestToTarget(target: str, to100: bool = False, coeffs: list = Constants.coeffs, bounds: list = Constants.bounds, upperBounds: list = Constants.upperBounds, bassBounds: list = Constants.bassBounds, trebleBounds: list = Constants.trebleBounds, excludeHeadphones: bool = Constants.excludeHeadphones) -> list:
     scoreDict = {}
     dico = getFRoTDict('frequency_responses')
 
@@ -79,19 +80,21 @@ def findClosestToTarget(target: str, to100: bool = False,coeffs: list = Constant
         # Take only AVG frequency responses
         if ignore == False:
             AVGscore = getScore(iem, target, to100=to100, bassBounds=bassBounds, bounds=bounds, upperBounds=upperBounds,
-                                 trebleBounds=trebleBounds, coeffs=coeffs)
+                                trebleBounds=trebleBounds, coeffs=coeffs)
             scoreDict[iem.replace(' (AVG)', '')] = AVGscore
             if to100 == True:
-                sortedList = sorted(scoreDict.items(), key=lambda x: x[1],reverse=True)
+                sortedList = sorted(scoreDict.items(),
+                                    key=lambda x: x[1], reverse=True)
             else:
                 sortedList = sorted(scoreDict.items(), key=lambda x: x[1])
-    
+
     return sortedList
 
 
 def top(size, target, coeffs: list = Constants.coeffs, bounds: list = Constants.bounds, upperBounds: list = Constants.upperBounds, bassBounds: list = Constants.bassBounds, trebleBounds: list = Constants.trebleBounds, excludeHeadphones: bool = Constants.excludeHeadphones):
-    sortedList = findClosestToTarget(target, to100=True, bassBounds=bassBounds, bounds=bounds, upperBounds=upperBounds, trebleBounds=trebleBounds, coeffs=coeffs, excludeHeadphones=excludeHeadphones)
-    
+    sortedList = findClosestToTarget(target, to100=True, bassBounds=bassBounds, bounds=bounds,
+                                     upperBounds=upperBounds, trebleBounds=trebleBounds, coeffs=coeffs, excludeHeadphones=excludeHeadphones)
+
     print(f'Target: {target}, calculating score from {bassBounds[0]} Hz to {bounds[1]} Hz and {trebleBounds[0]} Hz to {trebleBounds[1]} Hz.')
     print(f'Coeffs: \nBass: {coeffs[0]} ({bassBounds[0]}Hz - {bassBounds[1]}Hz)\nMidrange: {coeffs[1]} ({bounds[0]}Hz - {bounds[1]}Hz)\nUpper-midrange: {coeffs[2]} ({upperBounds[0]}Hz - {upperBounds[1]}Hz)\nTreble: {coeffs[3]} ({trebleBounds[0]}Hz - {trebleBounds[1]}Hz)')
     print('')
@@ -101,21 +104,22 @@ def top(size, target, coeffs: list = Constants.coeffs, bounds: list = Constants.
 
 
 def plot(size: int, target: str, height: int, coeffs: list = Constants.coeffs, bounds: list = Constants.bounds, upperBounds: list = Constants.upperBounds, bassBounds: list = Constants.bassBounds, trebleBounds: list = Constants.trebleBounds, excludeHeadphones: bool = Constants.excludeHeadphones):
-    sortedList = findClosestToTarget(target, to100=True, bassBounds=bassBounds, bounds=bounds, upperBounds=upperBounds, trebleBounds=trebleBounds, coeffs=coeffs, excludeHeadphones=excludeHeadphones)
+    sortedList = findClosestToTarget(target, to100=True, bassBounds=bassBounds, bounds=bounds,
+                                     upperBounds=upperBounds, trebleBounds=trebleBounds, coeffs=coeffs, excludeHeadphones=excludeHeadphones)
     devices = [sortedList[size-1-i][0] for i in range(size)]
     scores = [sortedList[size-1-i][1] for i in range(size)]
     fig, ax = plt.subplots()
     fig.set_figheight(height)
     ax.barh(devices, scores)
-    
-    ax.grid(color ='black',alpha = 0.2)
+
+    ax.grid(color='black', alpha=0.2)
     ax.set_axisbelow(True)
 
     for i in ax.patches:
-        plt.text(i.get_width()+0.2, i.get_y()+0.2, 
-                str(round((i.get_width()), 2)),
-                fontsize = 8,
-                color ='black')
+        plt.text(i.get_width()+0.2, i.get_y()+0.2,
+                 str(round((i.get_width()), 2)),
+                 fontsize=8,
+                 color='black')
 
     print(f'Target: {target}, calculating score from {bassBounds[0]} Hz to {bounds[1]} Hz and {trebleBounds[0]} Hz to {trebleBounds[1]} Hz.')
     print(f'Coeffs: \nBass: {coeffs[0]} ({bassBounds[0]}Hz - {bassBounds[1]}Hz)\nMidrange: {coeffs[1]} ({bounds[0]}Hz - {bounds[1]}Hz)\nUpper-midrange: {coeffs[2]} ({upperBounds[0]}Hz - {upperBounds[1]}Hz)\nTreble: {coeffs[3]} ({trebleBounds[0]}Hz - {trebleBounds[1]}Hz)')
