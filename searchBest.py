@@ -1,18 +1,19 @@
 from app.getFRoT import *
 from app.getFRfromFile import *
-from app.cleanData import cleanData
+from app.cleanData import *
 import matplotlib.pyplot as plt
 
 headphones = ['Audeze', 'Hifiman', 'Bose', 'HyperX',
               'Sennheiser HD', 'Sennheiser HE-1', 'Sony WH', 'AKG', 'Focal', 'Logitech', 'Beyerdynamic', 'Project', 'nodip']
 
 class Constants:
-    coeffs = [1, 4, 3, 2]
+    coeffs = [1, 4, 4, 2]
     listLength = 695
+    normalizeAt = 393
     bassBounds = [20, 100]
     bounds = [100, 3000]
     upperBounds = [3000, 7000]
-    trebleBounds = [9000, 20000]
+    trebleBounds = [9000, 17000]
     excludeHeadphones = True
 
 def isHeadphone(device: str):
@@ -31,7 +32,8 @@ def getScore(device: str, target: list, to100: bool = True, coeffs: list = Const
 
     frequencies, gains = cleanData(fr[0], fr[1])
     Tfrequencies, Tgains = cleanData(t[0], t[1])
-
+    Tgains = normalize(frequencies,gains,Tgains,at=Constants.normalizeAt)
+    
     score = 0
     n = 0
     for i in range(listLength):
@@ -110,7 +112,7 @@ def plot(size: int, target: str, height: int, coeffs: list = Constants.coeffs, b
     ax.set_axisbelow(True)
 
     for i in ax.patches:
-        plt.text(i.get_width()+0.2, i.get_y()+0.5, 
+        plt.text(i.get_width()+0.2, i.get_y()+0.2, 
                 str(round((i.get_width()), 2)),
                 fontsize = 8,
                 color ='black')
