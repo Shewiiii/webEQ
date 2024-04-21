@@ -8,12 +8,12 @@ headphones = ['Audeze', 'Hifiman', 'Bose', 'HyperX',
 
 
 class Constants:
-    coeffs = [1, 4, 4, 2]
+    coeffs = [1, 3, 4, 2]
     listLength = 695
     bassBounds = [20, 100]
     bounds = [100, 3000]
     upperBounds = [3000, 7000]
-    trebleBounds = [9000, 17000]
+    trebleBounds = [9000, 19000]
     excludeHeadphones = True
 
 
@@ -121,7 +121,7 @@ def plot(size: int, target: str, height: int, coeffs: list = Constants.coeffs, b
                  fontsize=8,
                  color='black')
 
-    print(f'Target: {target}, calculating score from {bassBounds[0]} Hz to {bounds[1]} Hz and {trebleBounds[0]} Hz to {trebleBounds[1]} Hz.')
+    print(f'Target: {target}, calculating score from {bassBounds[0]} Hz to {upperBounds[1]} Hz and {trebleBounds[0]} Hz to {trebleBounds[1]} Hz.')
     print(f'Coeffs: \nBass: {coeffs[0]} ({bassBounds[0]}Hz - {bassBounds[1]}Hz)\nMidrange: {coeffs[1]} ({bounds[0]}Hz - {bounds[1]}Hz)\nUpper-midrange: {coeffs[2]} ({upperBounds[0]}Hz - {upperBounds[1]}Hz)\nTreble: {coeffs[3]} ({trebleBounds[0]}Hz - {trebleBounds[1]}Hz)')
     print('')
     plt.show()
