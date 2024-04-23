@@ -10,6 +10,10 @@ from app.createFiles import *
 from app.getEQ import getParaEQ2
 from autoeq.frequency_response import FrequencyResponse
 
+#TODO:
+#remember the choices
+#not let continue if a target/iem has not been chosen
+
 app = Flask(__name__)
 
 FRDict = getFRoTDict('frequency_responses')

@@ -356,7 +356,7 @@ textarea {
   appearance: none;
   background-color: transparent;
   border: none;
-  margin: 0;
+  margin: auto;
   font-family: 'Segoe UI';
 
   border: 1px solid var(--select-border);
@@ -369,5 +369,4 @@ textarea {
   line-height: 1.1;
   background-color: var(--secondary2);
   color: var(--text);
-}
 }

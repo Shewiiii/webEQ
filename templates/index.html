@@ -98,13 +98,8 @@
             {% endfor %}
         </select>
 
-        <select name="secretIem" class="mainSelect" style="display: none;">
-            <option selected disabled hidden> Choose another device </option>
-            {% for iem in FRList %}
-            <option> {{ iem }} </option>
-            {% endfor %}
-        </select>
-
+        <input class="searchDevice" name="secretIem" list="iem"  type="text" name="search" placeholder="Choose your device" style="display: none;">
+        
         <div style="padding-top: 30px;"></div>
         <h4>- Settings -</h4>
         <div class="flexThing EQoptions">
