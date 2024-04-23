@@ -104,7 +104,6 @@ select {
   appearance: none;
   background-color: transparent;
   border: none;
-  padding: 0 1em 0 0;
   margin: 0;
   font-family: 'Segoe UI';
 
@@ -351,4 +350,24 @@ textarea {
   background-color: var(--secondary2);
   font-size: 16px;
   resize: none;
+}
+
+.searchDevice {
+  appearance: none;
+  background-color: transparent;
+  border: none;
+  margin: 0;
+  font-family: 'Segoe UI';
+
+  border: 1px solid var(--select-border);
+  border-radius: 0.75em;
+  padding: 0.25em 0.7em;
+  width: 100%;
+  min-width: 15ch;
+  max-width: 30ch;
+  font-size: 1.25rem;
+  line-height: 1.1;
+  background-color: var(--secondary2);
+  color: var(--text);
+}
 }

@@ -83,12 +83,12 @@
 <div class="maindivs EQdiv">
     <h3>- Try it ! -</h3>
     <form id="EQform" method="POST" action="{{ url_for('resultsAQ') }}">
-        <select name="iem" class="mainSelect">
-            <option selected disabled hidden> Choose your device </option>
+        <input class="searchDevice" name="iem" list="iem"  type="text" name="search" placeholder="Choose your device">
+        <datalist id="iem">
             {% for iem in FRList %}
             <option> {{ iem }} </option>
             {% endfor %}
-        </select>
+        </datalist>
         <h4>EQ to..</h4>
 
         <select name="target" class="mainSelect">

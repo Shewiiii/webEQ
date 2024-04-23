@@ -5,7 +5,6 @@ from app.getFRoT import getFRoTDict
 from app.getFRfromFile import *
 from random import randint
 from app.computeFilters import *
-from app.cleanData import normalize
 from app.createFiles import *
 
 
@@ -52,7 +51,6 @@ def autoEQ(iem:str,target:str,config,concha_interference,filterTypes,gekiyaba,up
         Tgains[i] += upshift
         idealGains[i] += upshift
 
-    Tgains = normalize(frequencies,idealGains,Tgains)
     #generate IIR string
     IIRstring = paraToIIR(restults)
     #Create files
