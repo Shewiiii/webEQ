@@ -2,18 +2,19 @@ from app.getFRoT import *
 from app.getFRfromFile import *
 from app.cleanData import *
 import matplotlib.pyplot as plt
+from math import *
 
 headphones = ['Audeze', 'Hifiman', 'Bose', 'HyperX',
-              'Sennheiser HD', 'Sennheiser HE-1', 'Sony WH', 'AKG', 'Focal', 'Logitech', 'Beyerdynamic', 'Project', 'nodip']
+              'Sennheiser HD', 'Sennheiser HE-1', 'Sony WH', 'AKG', 'Focal', 'Logitech', 'Beyerdynamic', 'Project', 'nodip','Yamaha','Auribus']
 
 
 class Constants:
-    coeffs = [1, 3, 3, 2]
+    coeffs = [1, 3, 4, 2]
     listLength = 695
-    bassBounds = [20, 200]
-    bounds = [200, 3000]
-    upperBounds = [3000, 7000]
-    trebleBounds = [9000, 19000]
+    bassBounds = [20, 150]
+    bounds = [150, 3000]
+    upperBounds = [3000, 8000]
+    trebleBounds = [11000, 18500]
     excludeHeadphones = True
 
 
@@ -50,7 +51,7 @@ def getScore(device: str, target: list, showDelta: bool = False, to100: bool = T
         # coeffs: [coef bass, coef mid, coef treble]
         delta = abs(Tgains[i]-gains[i])
 
-        if bassBounds[0] < frequencies[i] <= bassBounds[1]:
+        if bassBounds[0] <= frequencies[i] <= bassBounds[1]:
             score += delta*coeffs[0]
             bscore += delta
             b += 1
@@ -68,7 +69,7 @@ def getScore(device: str, target: list, showDelta: bool = False, to100: bool = T
             um += 1
             n += 1
 
-        if trebleBounds[0] < frequencies[i] <= trebleBounds[1]:
+        if trebleBounds[0] <= frequencies[i] <= trebleBounds[1]:
             score += delta*coeffs[3]
             tscore += delta
             t += 1
@@ -79,10 +80,10 @@ def getScore(device: str, target: list, showDelta: bool = False, to100: bool = T
         AVGscore = 100/AVGscore
 
     if showDelta == True:
-        all = [AVGscore, bscore/b, mscore/m, umscore/um, tscore/t]
-        final = []
+        all = [bscore/b, mscore/m, umscore/um, tscore/t]
+        final = [round(AVGscore, 2)]
         for i in all:
-            final.append(round(i, 2))
+            final.append(round(i, 1))
         return final
     return round(AVGscore, 2)
 
@@ -120,14 +121,13 @@ def findClosestToTarget(target: str, to100: bool = False, coeffs: list = Constan
 
         # Take only AVG frequency responses
         if ignore == False:
-            AVGscore = getScore(iem, target, to100=to100, bassBounds=bassBounds, bounds=bounds, upperBounds=upperBounds,
+            AVGscore = getScore(iem, target, showDelta=True, to100=to100, bassBounds=bassBounds, bounds=bounds, upperBounds=upperBounds,
                                 trebleBounds=trebleBounds, coeffs=coeffs)
             scoreDict[iem.replace(' (AVG)', '')] = AVGscore
             if to100 == True:
-                sortedList = sorted(scoreDict.items(),
-                                    key=lambda x: x[1], reverse=True)
+                sortedList = sorted(scoreDict.items(), key=lambda x: x[1][0], reverse=True)
             else:
-                sortedList = sorted(scoreDict.items(), key=lambda x: x[1])
+                sortedList = sorted(scoreDict.items(), key=lambda x: x[1][0])
 
     return sortedList
 
@@ -153,19 +153,24 @@ def plot(size: int, target: str, height: int, coeffs: list = Constants.coeffs, b
         size = len(sortedList)
 
     devices = [sortedList[size-1-i][0] for i in range(size)]
-    scores = [sortedList[size-1-i][1] for i in range(size)]
+    scores = [sortedList[size-1-i][1][0] for i in range(size)]
     fig, ax = plt.subplots()
     fig.set_figheight(height)
+    fig.set_figwidth(8)
     ax.barh(devices, scores)
 
     ax.grid(color='black', alpha=0.2)
     ax.set_axisbelow(True)
 
-    for i in ax.patches:
-        plt.text(i.get_width()+0.2, i.get_y()+0.2,
-                 str(round((i.get_width()), 2)),
-                 fontsize=8,
+    n = 0
+    for bar in ax.patches:
+        plt.text(bar.get_width()+0.2, bar.get_y()+0.2,
+                 f'{round((bar.get_width()), 2)} #{size-n}',
+                 fontsize=9,
                  color='black')
+        ax.text(0.1, bar.get_y()+bar.get_height()/2,
+                f'{sortedList[size-1-n][1][1:]}', color='white', ha='left', va='center', fontsize=8)
+        n += 1
 
     print(f'Target: {target}, calculating score from {bassBounds[0]} Hz to {upperBounds[1]} Hz and {trebleBounds[0]} Hz to {trebleBounds[1]} Hz.')
     print(f'Coeffs: \nBass: {coeffs[0]} ({bassBounds[0]}Hz - {bassBounds[1]}Hz)\nMidrange: {coeffs[1]} ({bounds[0]}Hz - {bounds[1]}Hz)\nUpper-midrange: {coeffs[2]} ({upperBounds[0]}Hz - {upperBounds[1]}Hz)\nTreble: {coeffs[3]} ({trebleBounds[0]}Hz - {trebleBounds[1]}Hz)')
