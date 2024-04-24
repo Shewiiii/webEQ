@@ -16,7 +16,7 @@ class Constants:
     upperBounds = [3000, 8000]
     trebleBounds = [11000, 18500]
     excludeHeadphones = True
-
+    comp = 1
 
 def isHeadphone(device: str):
     for headphone in headphones:
@@ -52,25 +52,25 @@ def getScore(device: str, target: list, showDelta: bool = False, to100: bool = T
         delta = abs(Tgains[i]-gains[i])
 
         if bassBounds[0] <= frequencies[i] <= bassBounds[1]:
-            score += delta*coeffs[0]
+            score += (delta + Constants.comp)*coeffs[0] 
             bscore += delta
             b += 1
             n += 1
 
         if bounds[0] <= frequencies[i] <= bounds[1]:
-            score += delta*coeffs[1]
+            score += (delta + Constants.comp)*coeffs[1] 
             mscore += delta
             m += 1
             n += 1
 
         if upperBounds[0] <= frequencies[i] <= upperBounds[1]:
-            score += delta*coeffs[2]
+            score += (delta + Constants.comp)*coeffs[2] 
             umscore += delta
             um += 1
             n += 1
 
         if trebleBounds[0] <= frequencies[i] <= trebleBounds[1]:
-            score += delta*coeffs[3]
+            score += (delta + Constants.comp)*coeffs[3] 
             tscore += delta
             t += 1
             n += 1
@@ -175,5 +175,5 @@ def plot(size: int, target: str, height: int, coeffs: list = Constants.coeffs, b
     print(f'Target: {target}, calculating score from {bassBounds[0]} Hz to {upperBounds[1]} Hz and {trebleBounds[0]} Hz to {trebleBounds[1]} Hz.')
     print(f'Coeffs: \nBass: {coeffs[0]} ({bassBounds[0]}Hz - {bassBounds[1]}Hz)\nMidrange: {coeffs[1]} ({bounds[0]}Hz - {bounds[1]}Hz)\nUpper-midrange: {coeffs[2]} ({upperBounds[0]}Hz - {upperBounds[1]}Hz)\nTreble: {coeffs[3]} ({trebleBounds[0]}Hz - {trebleBounds[1]}Hz)')
     print('')
-    print('Score = 100/[(bassDelta*bassCoeff + midsDelta*midsCoeff + upper-midsDelta*UMidsCoeff + trebleDelta*trebleCoeff)/number of values]')
+    print('Score = 100/[( (bassDelta+1)*bassCoeff + (midsDelta+1)*midsCoeff + (upper-midsDelta+1)*UMidsCoeff + (trebleDelta+1)*trebleCoeff)/number of values]')
     plt.show()
