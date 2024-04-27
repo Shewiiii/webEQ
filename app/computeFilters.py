@@ -4,6 +4,8 @@ from app.getFRfromFile import *
 from app.getEQ import getParaEQ
 from math import *
 # source: source code of listener/crinacle/...'s graph tool
+
+
 def peak(frequency, q, gain, samplerate=48000):
     frequency = frequency / samplerate
     w0 = 2 * pi * frequency
@@ -41,14 +43,14 @@ def calcGains(frequencies: list, coeffs: list, samplerate=48000) -> list:
 
 
 def getCoeffs(results) -> list:
-    #results example: [{'type': 'PK', 'freq': 20, 'q': 0.7, 'gain': -4.6},...]
+    # results example: [{'type': 'PK', 'freq': 20, 'q': 0.7, 'gain': -4.6},...]
     coeffs = []
     for filter in results:
         coeffs.append(peak(filter['freq'], filter['q'], filter['gain']))
     return coeffs
 
 
-def getNewGain(frequencies:list,gains: list,results:list) -> tuple[list,list,list]:
+def getNewGain(frequencies: list, gains: list, results: list) -> tuple[list, list, list]:
     # get FR of the iem from a/the txt file
     valcount = len(gains)
 
@@ -61,4 +63,4 @@ def getNewGain(frequencies:list,gains: list,results:list) -> tuple[list,list,lis
     for i in range(valcount):
         # reshape de final EQ basically
         newGains.append(gains[i]+deltaGains[i])
-    return newGains,deltaGains
+    return newGains, deltaGains

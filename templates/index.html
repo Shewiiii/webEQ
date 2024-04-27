@@ -43,6 +43,7 @@
 <div id="results" class="maindivs">
     <h3 class="r">- Results -</h3>
     <p class="r">EQ {{ iem }} -> {{ target }}</p>
+    <p name="id" class="r">Request ID: {{ id }}</p>
     <div class="flexThing">
         <div class="paraEQ">
             <table class="r paratable">
@@ -63,9 +64,10 @@
             </table>
         </div>
         <div class="buttons">
-            <a href="{{url_for('wavelet')}}" download='test' class=" dl">Export to Wavelet/EQapo</a>
-            <a href="{{url_for('poweramp')}}" download='test' class="dl">Export to Poweramp</a>
-            <a href="{{url_for('parametric')}}" download='test' class="dl" onclick="listener()">Download Parametric
+            <a href="{{url_for('wavelet', id=id)}}" download='test' class=" dl">Export to Wavelet/EQapo</a>
+            <a href="{{url_for('poweramp', id=id)}}" download='test' class="dl">Export to Poweramp</a>
+            <a href="{{url_for('parametric', id=id)}}" download='test' class="dl" onclick="listener()">Download
+                Parametric
                 EQ</a>
             <p id="listener" class="r rcomment" style="display: none;">You probably want to check <a class="link black"
                     href="https://listener800.github.io/5128" target="_blank">Listener's graph database</a> and the <a
@@ -82,8 +84,8 @@
 <div style="padding-top: 50px;"></div>
 <div class="maindivs EQdiv">
     <h3>- Try it ! -</h3>
-    <form id="EQform" method="POST" action="{{ url_for('resultsAQ') }}">
-        <input class="searchDevice" name="iem" list="iem"  type="text" name="search" placeholder="Choose your device">
+    <form id="EQform" method="POST" action="{{ url_for('processAQ',id=id) }}">
+        <input class="searchDevice" name="iem" list="iem" type="text" name="search" placeholder="Choose your device">
         <datalist id="iem">
             {% for iem in FRList %}
             <option> {{ iem }} </option>
@@ -98,8 +100,9 @@
             {% endfor %}
         </select>
 
-        <input class="searchDevice" name="secretIem" list="iem"  type="text" name="search" placeholder="Choose your device" style="display: none;">
-        
+        <input class="searchDevice" name="secretIem" list="iem" type="text" name="search"
+            placeholder="Choose your device" style="display: none;">
+
         <div style="padding-top: 30px;"></div>
         <h4>- Settings -</h4>
         <div class="flexThing EQoptions">
@@ -159,8 +162,10 @@
         <p><strong>SoundGuys Target</strong>: Nice balance between neutral and fun (recommended)</p>
         <p><strong>Shewi Target</strong>: U-Shaped Target focused on technicalities and immersiveness. My go-to sound
             profile. I've tried to mix the midrange of the U6t with the bass and the treble of the Storm. Note that you
-            will have to adjust the EQ manually for better results
+            will have to adjust the EQ manually for better results.
         </p>
+        <p><strong>Shewi Target</strong>: More or less the same but with a more elevated lower-treble. Might work for
+            more people but it sounds a bit too shouty for me</p>
         <p><strong>JM-1</strong>: Neutral for IEMs</p>
         <p><strong>Harman Beta (2024)</strong>: If you want a sound similar to AutoEQ but more precise</p>
         <h5>- Settings -</h5>
@@ -293,7 +298,7 @@
         modeSelect.value = 'standard';
         eqresSelect.value = 'yes';
         goButton.type = ''
-        EQform.action = '/lochbaum'
+        EQform.action = '/lochbaum/{{ id }}'
         eqWarningAQ.style.display = 'none'
         eqWarningLO.style.display = 'block'
     }
@@ -319,7 +324,7 @@
             goButton.type = 'submit';
             eqWarningAQ.style.display = 'block';
             eqWarningLO.style.display = 'none';
-            EQform.action = '/resultsAQ';
+            EQform.action = '/resultsAQ/{{ id }}';
         }
     }
 
@@ -352,7 +357,7 @@
     gradient2.addColorStop(0, 'rgba(51, 51, 51, 1)');
     gradient2.addColorStop(1, 'rgba(0, 0, 0,0)');
 
-    new Chart(myChart, {
+    var chart = new Chart(myChart, {
         type: 'line',
         data: {
             labels: frequencies,
@@ -393,6 +398,11 @@
             title: {
                 display: true,
                 text: 'Frequency Response Graph'
+            },
+            animation: {
+                onComplete: function () {
+                    console.log(chart.toBase64Image());
+                },
             },
             scales: {
                 x: {
@@ -463,6 +473,7 @@
             }
         }
     });
+
 </script>
 {% endif %}
 
