@@ -1,6 +1,13 @@
 {% extends 'base.html' %}
 {% block head%}
-<meta content="EQ {{ iem }} -> {{ target }},  Filter count: {{ results|length}},  Algorithm: {{ algo }},  Date: {{ processed }}" property="og:description" />
+{% if result != None %}
+<meta
+    content="EQ {{ iem }} -> {{ target }},  Filter count: {{ results|length}},  Algorithm: {{ algo }},  Date: {{ processed }}"
+    property="og:description" />
+<meta content="{{ url_for('chart',id=id) }}" property="og:image" />
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image:src" content="{{ url_for('chart',id=id) }}"/>
+{% endif %}
 {% endblock %}
 
 {% block body%}
@@ -45,7 +52,7 @@
 <div id="results" class="maindivs">
     <h3 class="r">- Results -</h3>
     <p class="r">EQ {{ iem }} -> {{ target }}</p>
-    <p name="id" class="r">Request ID: {{ id }}</p>
+    <p name="infos" class="r">Request ID: {{ id }} | Algorithm: {{ algo }} | Filter count: {{ results|length }}</p>
     <div class="flexThing">
         <div class="paraEQ">
             <table class="r paratable">
@@ -350,6 +357,7 @@
     var frequencies = {{ frequencies | tojson }};
     var Tgains = {{ Tgains | tojson }};
     var newgains = {{ newgains | tojson }};
+    var id = {{ id| tojson }};
 
     var gradient = myChart.createLinearGradient(0, 0, 0, 600);
     gradient.addColorStop(0, 'rgba(81, 58, 197, 1)');
@@ -405,6 +413,14 @@
                 onComplete: function () {
                     var img = chart.toBase64Image()
                     console.log(img);
+                    var data = [img, id]
+                    fetch('/saveChart', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ data: data })
+                    })
                 },
             },
             scales: {

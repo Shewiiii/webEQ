@@ -14,7 +14,6 @@ import json
 # TODO:
 # remember the choices
 # not let continue if a target/iem has not been chosen
-# support simult. requests
 
 app = Flask(__name__)
 
@@ -61,20 +60,28 @@ def processAQ(id):
     log(rawiem, iem, target, algo, filterCount, eqres, mode)
 
     # ======return======
-    return redirect(f'/resultsAQ/{id}')
+    return redirect(f'/results/{id}')
 
-
-@app.route('/resultsAQ/<id>')
-def resultsAQ(id):
+@app.route('/results/<id>')
+def results(id):
     entity = getEntity(id)
-    iem, target, algo, processed = entity[2:6]
-    filterCount, eqres, mode = entity[6:9]
 
+    # ======get all data======
+    rawiem, iem, target, algo, processed, filterCount, eqres, mode, results = entity[1:]
+
+    if algo == 'default':
+        return resultsAQ(id, rawiem, iem, target, algo, processed, filterCount, eqres, mode)
+    elif algo == 'lochbaum':
+        return resultsLO(id, rawiem, iem, target, algo, processed, results)
+    else:
+        return redirect('/')
+
+
+def resultsAQ(id, rawiem, iem, target, algo, processed, filterCount, eqres, mode):
     gekiyabaa = gekiyaba(target)
     if gekiyabaa:
-        # check if gekiyaba mode !!!
-        target = FRDict[target]
-    print('choix:', iem, target)
+        #show raw iem name if gekiyaba mode
+        target = rawiem
 
     # ======settings======
     if eqres == 'yes':
@@ -114,10 +121,37 @@ def resultsAQ(id):
                            iem=iem,
                            target=target,
                            iir=IIR,
-                           # pour graph:
                            frequencies=frequencies,
                            gains=gains,
                            newgains=newGains,
+                           Tgains=Tgains,
+                           id=id,
+                           algo=algo,
+                           processed=processed
+                           )
+
+def resultsLO(id, rawiem, iem, target, algo, processed, results):
+
+    # ======get all data======
+    results = json.loads(results.replace("'",'"'))
+    gekiyabaa = gekiyaba(target)
+    IIR = paraToIIR(results)
+    frequencies, gains, Tgains, iemLoch, targetLoch = getLochbaum(
+        rawiem, target, gekiyabaa)
+
+    newGains, deltaGains = getNewGain(frequencies, gains, results)
+    # ======return======
+    return render_template('index.html',
+                           FRList=FRList,
+                           targetList=targetList,
+                           result="aouiiii",
+                           results=results,
+                           iem=iem,
+                           target=target,
+                           iir=IIR, 
+                           frequencies=frequencies, 
+                           gains=gains, 
+                           newgains=newGains, 
                            Tgains=Tgains,
                            id=id,
                            algo=algo,
@@ -169,8 +203,16 @@ def lochbaum(id):
     # ======return======
     return render_template('lochbaum.html', iemLoch=iemLoch, targetLoch=targetLoch, filterCount=EQ.filterCount, id=id)
 
+@app.route('/saveChart', methods=['POST'])
+def saveChart():
+    data = request.json['data']
+    imgData = data[0]
+    id = data[1]
+    createChartImage(imgData,id)
+    return redirect("/")
 
 @app.route('/process-data', methods=['POST'])
+#FOR LOCHBAUM OBV
 def process_data():
     EQ.results = request.json['data']
     EQ.newGains, EQ.deltaGains = getNewGain(
@@ -191,39 +233,6 @@ def process_data():
     # ======return======
     return redirect("/")
 
-
-@app.route('/resultsLO/<id>')
-def results2(id):
-    entity = getEntity(id)
-
-    # ======get all data======
-    iem, target, algo, processed = entity[2:6]
-    rawiem = FRDict[iem]
-    results = json.loads(entity[9].replace("'",'"'))
-    gekiyabaa = gekiyaba(target)
-    IIR = paraToIIR(results)
-    frequencies, gains, Tgains, iemLoch, targetLoch = getLochbaum(
-        rawiem, target, gekiyabaa)
-
-    newGains, deltaGains = getNewGain(frequencies, gains, results)
-    # ======return======
-    return render_template('index.html',
-                           FRList=FRList,
-                           targetList=targetList,
-                           result="aouiiii",
-                           results=results,
-                           iem=iem,
-                           target=target,
-                           iir=IIR, \
-                           # pour graph:
-                           frequencies=frequencies, \
-                           gains=gains, \
-                           newgains=newGains, \
-                           Tgains=Tgains,
-                           id=id,
-                           algo=algo,
-                           processed=processed
-                           )
 
 
 @app.route('/moondrop', methods=['GET', 'POST'])
@@ -287,6 +296,10 @@ def iir():
         result = 'aouiiiiii'
     return render_template('iir.html', result=result, string=string)
 
+@app.route('/chart/<id>', methods=['GET', 'POST'])
+def chart(id):
+    path = f'generated_files/chart{id}.png'
+    return send_file(path)
 
 if __name__ == "__main__":
     app.run(debug=True)

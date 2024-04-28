@@ -23,11 +23,11 @@ class DB:
     def query(self, sql):
         try:
             cursor = self.conn.cursor(buffered=True)
-            cursor.execute(sql)
         except:
             self.connect()
             cursor = self.conn.cursor(buffered=True)
-            cursor.execute(sql)
+        cursor.execute(sql)
+        self.conn.commit()
         return cursor
 
 
@@ -53,11 +53,11 @@ def get_free_id(table=Constants.table) -> int:
         print("lastid:", lastid)
         return lastid+1
 
-
+#log("rawiem","iem","target","algo",10,"eqres","mode",results="",table="webEQ")
 def log(rawiem: str, iem: str, target: str, algo: str, filtercount: str, eqres: str, mode: str, results: str = '', table: str = Constants.table) -> int:
-    db.query(f'SELECT * FROM {table};')
     processed = now.strftime("%Y-%m-%d %H:%M:%S")
     id = get_free_id()
+    print(f'INSERT INTO {table} VALUES ({id},"{rawiem}","{iem}","{target}","{algo}","{processed}","{filtercount}","{eqres}","{mode}","{results}");')
     db.query(
         f'INSERT INTO {table} VALUES ({id},"{rawiem}","{iem}","{target}","{algo}","{processed}","{filtercount}","{eqres}","{mode}","{results}");')
     return id

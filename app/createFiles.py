@@ -1,6 +1,8 @@
 import pathlib
 from random import randint
+import base64
 
+parent = pathlib.Path(__file__).parents[1] / f'generated_files/'
 
 def paraToIIR(restults: list):
 
@@ -15,8 +17,7 @@ def paraToIIR(restults: list):
 
 def createParaEQFile(iem: str, target: str, restults: list):
 
-    filePath = pathlib.Path(
-        __file__).parents[1] / f'generated_files/{iem} [{target}] (Parametric EQ).txt'
+    filePath = parent / f'{iem} [{target}] (Parametric EQ).txt'
 
     string = ''
     i = 0
@@ -28,8 +29,7 @@ def createParaEQFile(iem: str, target: str, restults: list):
 
 def createPAFile(iem: str, target: str, restults: list):
 
-    filePath = pathlib.Path(
-        __file__).parents[1] / f'generated_files/{iem} [{target}] (Poweramp).json'
+    filePath = parent / f'{iem} [{target}] (Poweramp).json'
     filtersDict = {"PK": 3, "LSQ": 4, "HSC": 5}
 
     bands = [{"type": 0, "channels": 0, "frequency": 90, "q": 0, "gain": 0.0, "color": 0}, {
@@ -46,6 +46,13 @@ def createPAFile(iem: str, target: str, restults: list):
 def createWaveletFile(iem: str, target: str, iemAQ):
 
     string = iemAQ.eqapo_graphic_eq()
-    filePath = pathlib.Path(
-        __file__).parents[1] / f'generated_files/{iem} [{target}] (Wavelet,Equalizer APO).txt'
+    filePath = parent / f'{iem} [{target}] (Wavelet,Equalizer APO).txt'
     open(filePath, 'w').write(string)
+
+
+def createChartImage(data: str,id: int):
+
+    filePath = parent / f'chart{id}.png'
+    data = data.replace('data:image/png;base64,','')
+    imgdata = base64.b64decode(data)
+    open(filePath, 'wb').write(imgdata)
