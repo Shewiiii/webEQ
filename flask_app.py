@@ -67,7 +67,7 @@ def processAQ(id):
 @app.route('/resultsAQ/<id>')
 def resultsAQ(id):
     entity = getEntity(id)
-    iem, target = entity[2:4]
+    iem, target, algo, processed = entity[2:6]
     filterCount, eqres, mode = entity[6:9]
 
     gekiyabaa = gekiyaba(target)
@@ -119,7 +119,9 @@ def resultsAQ(id):
                            gains=gains,
                            newgains=newGains,
                            Tgains=Tgains,
-                           id=id
+                           id=id,
+                           algo=algo,
+                           processed=processed
                            )
 
 
@@ -184,7 +186,7 @@ def process_data():
     createWaveletFile(EQ.iem, EQ.target, iemAQ)
 
     # ======Save in Database======
-    log(FRDict[EQ.iem], EQ.iem, EQ.target, 'locbaum',
+    log(FRDict[EQ.iem], EQ.iem, EQ.target, 'lochbaum',
         EQ.filterCount, 'no', '', results=EQ.results)
     # ======return======
     return redirect("/")
@@ -195,7 +197,7 @@ def results2(id):
     entity = getEntity(id)
 
     # ======get all data======
-    iem, target = entity[2:4]
+    iem, target, algo, processed = entity[2:6]
     rawiem = FRDict[iem]
     results = json.loads(entity[9].replace("'",'"'))
     gekiyabaa = gekiyaba(target)
@@ -218,7 +220,9 @@ def results2(id):
                            gains=gains, \
                            newgains=newGains, \
                            Tgains=Tgains,
-                           id=id
+                           id=id,
+                           algo=algo,
+                           processed=processed
                            )
 
 

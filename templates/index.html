@@ -1,5 +1,7 @@
 {% extends 'base.html' %}
-{% block head%}{% endblock %}
+{% block head%}
+<meta content="EQ {{ iem }} -> {{ target }},  Filter count: {{ results|length}},  Algorithm: {{ algo }},  Date: {{ processed }}" property="og:description" />
+{% endblock %}
 
 {% block body%}
 <script>
@@ -401,7 +403,8 @@
             },
             animation: {
                 onComplete: function () {
-                    console.log(chart.toBase64Image());
+                    var img = chart.toBase64Image()
+                    console.log(img);
                 },
             },
             scales: {
