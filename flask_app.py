@@ -62,13 +62,28 @@ def processAQ(id):
     # ======return======
     return redirect(f'/results/{id}')
 
+
+@app.route('/saveChart', methods=['POST'])
+def saveChart():
+    data = request.json['data']
+    imgData = data[0]
+    id = data[1]
+    createChartImage(imgData,id)
+    return redirect("/")
+
+
+@app.route('/chart/<id>', methods=['GET', 'POST'])
+def chart(id):
+    path = f'generated_files/chart{id}.png'
+    return send_file(path)
+
+
 @app.route('/results/<id>')
 def results(id):
     entity = getEntity(id)
 
     # ======get all data======
     rawiem, iem, target, algo, processed, filterCount, eqres, mode, results = entity[1:]
-
     if algo == 'default':
         return resultsAQ(id, rawiem, iem, target, algo, processed, filterCount, eqres, mode)
     elif algo == 'lochbaum':
@@ -123,7 +138,7 @@ def resultsAQ(id, rawiem, iem, target, algo, processed, filterCount, eqres, mode
                            iir=IIR,
                            frequencies=frequencies,
                            gains=gains,
-                           newgains=newGains,
+                           newGains=newGains,
                            Tgains=Tgains,
                            id=id,
                            algo=algo,
@@ -151,7 +166,7 @@ def resultsLO(id, rawiem, iem, target, algo, processed, results):
                            iir=IIR, 
                            frequencies=frequencies, 
                            gains=gains, 
-                           newgains=newGains, 
+                           newGains=newGains, 
                            Tgains=Tgains,
                            id=id,
                            algo=algo,
@@ -202,14 +217,6 @@ def lochbaum(id):
 
     # ======return======
     return render_template('lochbaum.html', iemLoch=iemLoch, targetLoch=targetLoch, filterCount=EQ.filterCount, id=id)
-
-@app.route('/saveChart', methods=['POST'])
-def saveChart():
-    data = request.json['data']
-    imgData = data[0]
-    id = data[1]
-    createChartImage(imgData,id)
-    return redirect("/")
 
 @app.route('/process-data', methods=['POST'])
 #FOR LOCHBAUM OBV
@@ -295,11 +302,6 @@ def iir():
         string = paraToIIR(results)
         result = 'aouiiiiii'
     return render_template('iir.html', result=result, string=string)
-
-@app.route('/chart/<id>', methods=['GET', 'POST'])
-def chart(id):
-    path = f'generated_files/chart{id}.png'
-    return send_file(path)
 
 if __name__ == "__main__":
     app.run(debug=True)

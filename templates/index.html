@@ -6,7 +6,7 @@
     property="og:description" />
 <meta content="{{ url_for('chart',id=id) }}" property="og:image" />
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image:src" content="{{ url_for('chart',id=id) }}"/>
+<meta name="twitter:image:src" content="{{ url_for('chart',id=id) }}" />
 {% endif %}
 {% endblock %}
 
@@ -286,6 +286,9 @@
         </p>
     </div>
 </div>
+<div style="position:absolute;left:-9999px;top:-9999px;width: 1280px;height: 720px;">
+    <canvas id="cloneChart" style="display: none;"></canvas>
+</div>
 <div style="padding-top: 250px;"></div>
 <p style="text-align: center;color: var(--secondary3);font-family: Segoe UI Bold;font-weight: bold;">
     かえるぴょこぴょこみぴょこぴょこ
@@ -349,14 +352,15 @@
 
 
     const myChart = document.getElementById('myChart').getContext("2d");
+    const cloneChart = document.getElementById('cloneChart').getContext("2d");
 
     var iem = {{ iem | tojson }};
     var target = {{ target | tojson }};
 
-    var gains = {{ gains | tojson }};
     var frequencies = {{ frequencies | tojson }};
+    var gains = {{ gains | tojson }};
+    var newGains = {{ newGains | tojson }};
     var Tgains = {{ Tgains | tojson }};
-    var newgains = {{ newgains | tojson }};
     var id = {{ id| tojson }};
 
     var gradient = myChart.createLinearGradient(0, 0, 0, 600);
@@ -367,13 +371,21 @@
     gradient2.addColorStop(0, 'rgba(51, 51, 51, 1)');
     gradient2.addColorStop(1, 'rgba(0, 0, 0,0)');
 
+    var gradient = cloneChart.createLinearGradient(0, 0, 0, 600);
+    gradient.addColorStop(0, 'rgba(81, 58, 197, 1)');
+    gradient.addColorStop(1, 'rgba(0, 0, 0,0)');
+
+    var gradient2 = cloneChart.createLinearGradient(0, 0, 0, 600);
+    gradient2.addColorStop(0, 'rgba(51, 51, 51, 1)');
+    gradient2.addColorStop(1, 'rgba(0, 0, 0,0)');
+
     var chart = new Chart(myChart, {
         type: 'line',
         data: {
             labels: frequencies,
             datasets: [
                 {
-                    data: newgains,
+                    data: newGains,
                     label: iem + ' EQ',
                     borderColor: "#684EEB",
                     fill: true,
@@ -408,20 +420,6 @@
             title: {
                 display: true,
                 text: 'Frequency Response Graph'
-            },
-            animation: {
-                onComplete: function () {
-                    var img = chart.toBase64Image()
-                    console.log(img);
-                    var data = [img, id]
-                    fetch('/saveChart', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({ data: data })
-                    })
-                },
             },
             scales: {
                 x: {
@@ -483,6 +481,141 @@
                         font: {
                             family: "Poppins",
                             size: 15,
+                        }
+                    }
+                },
+                tooltip: {
+                    intersect: false
+                }
+            }
+        }
+    });
+
+    var chart2 = new Chart(cloneChart, {
+        type: 'line',
+        data: {
+            labels: frequencies,
+            datasets: [
+                {
+                    data: newGains,
+                    label: iem + ' EQ',
+                    borderColor: "#684EEB",
+                    fill: true,
+                    backgroundColor: gradient,
+                    borderWidth: 8,
+                },
+                {
+                    data: gains,
+                    label: iem + ' Stock',
+                    borderColor: "#333333",
+                    fill: true,
+                    backgroundColor: gradient2,
+                    borderWidth: 8,
+                },
+                {
+                    data: Tgains,
+                    label: target,
+                    borderColor: "#877CC1",
+                    fill: false,
+                    borderDash: [5, 5],
+                    borderWidth: 8,
+                }]
+        },
+        options: {
+            maintainAspectRatio: false,
+            interaction: {
+                mode: 'x',
+            },
+            elements: {
+                point: {
+                    radius: 0
+                }
+            },
+            responsive: true,
+            title: {
+                display: true,
+                text: 'Frequency Response Graph'
+            },
+            animation: {
+                onComplete: function () {
+                    var img = chart2.toBase64Image()
+                    console.log(img);
+                    var data = [img, id]
+                    fetch('/saveChart', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ data: data })
+                    })
+                    window.setTimeout(function () { window.location.href = "/results/{{ id }}"; }, 10000000);
+                },
+            },
+            scales: {
+                x: {
+                    type: 'logarithmic',
+                    ticks: {
+                        color: "#f5f5ff",
+                        beginAtZero: true,
+                        font: {
+                            family: "Poppins",
+                            size: 25,
+                            weight: 550,
+                        },
+                    },
+                    grid: {
+                        display: true,
+                        color: "#312f42",
+                    },
+                    min: 20,
+                    max: 20000,
+                    title: {
+                        display: true,
+                        color: "#f5f5ff", //texte ?
+                        text: "Frequency (Hz)",
+                        font: {
+                            family: "Poppins",
+                            size: 20,
+                            weight: 550,
+                        },
+                    },
+                },
+                y: {
+                    grid: {
+                        display: false,
+                    },
+                    ticks: {
+                        color: "#f5f5ff", //texte ?
+                        beginAtZero: true,
+                        font: {
+                            family: "Poppins",
+                            size: 25,
+                            weight: 550,
+                        },
+                    },
+                    min: 50,
+                    max: 80,
+                    title: {
+                        display: true,
+                        color: "#f5f5ff", //texte ?
+                        text: "Gain (dB)",
+                        font: {
+                            family: "Poppins",
+                            size: 20,
+                            weight: 550,
+                        },
+                    },
+                },
+
+            },
+            plugins: {
+                legend: {
+                    labels: {
+                        color: "#FFFFFF",
+                        font: {
+                            family: "Poppins",
+                            size: 25,
+                            weight: 550,
                         }
                     }
                 },
