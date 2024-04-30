@@ -2,9 +2,6 @@ import mysql.connector
 from datetime import datetime
 
 
-now = datetime.now()
-
-
 class Constants:
     table = 'webEQ'
 # scheme: webEQ (ID int Primary Key, rawiem String, iem String, target String, processed Datetime)
@@ -55,6 +52,7 @@ def get_free_id(table=Constants.table) -> int:
 
 #log("rawiem","iem","target","algo",10,"eqres","mode",results="",table="webEQ")
 def log(rawiem: str, iem: str, target: str, algo: str, filtercount: str, eqres: str, mode: str, results: str = '', table: str = Constants.table) -> int:
+    now = datetime.now()
     processed = now.strftime("%Y-%m-%d %H:%M:%S")
     id = get_free_id()
     print(f'INSERT INTO {table} VALUES ({id},"{rawiem}","{iem}","{target}","{algo}","{processed}","{filtercount}","{eqres}","{mode}","{results}");')
