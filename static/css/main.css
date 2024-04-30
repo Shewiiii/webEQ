@@ -334,7 +334,7 @@ select:disabled {
   color: var(--purple);
 }
 
-.link:hover {
+#results .link:hover {
   color: var(--dark-purple);
 }
 

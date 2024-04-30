@@ -283,7 +283,7 @@ def moondrop():
         for filt in peqs:
             i += 1
             string += f'Filter {i}: ON PK Fc {int(filt.fc)} Hz Gain {round(filt.gain,1)} dB Q {round(filt.q,1)}\n'
-        path = pathlib.Path(__file__).parents[0] / f.filename
+        path = pathlib.Path(__file__).parents[0] / f'generated_files/ {f.filename}'
         open(path, 'w').write(string)
         return send_file(path, as_attachment=True)
 
@@ -296,7 +296,7 @@ def iir():
     string = ''
     if request.method == 'POST':
         f = request.files['file']
-        path = pathlib.Path(__file__).parents[0] / f.filename
+        path = pathlib.Path(__file__).parents[0] / f'generated_files/ {f.filename}'
         f.save(path)
         results = getParaEQ2(path)
         string = paraToIIR(results)
