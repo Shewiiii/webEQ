@@ -11,9 +11,8 @@ from app.getEQ import getParaEQ2
 from autoeq.frequency_response import FrequencyResponse
 from app.database import *
 import json
-# TODO:
-# remember the choices
-# not let continue if a target/iem has not been chosen
+import datetime
+
 
 app = Flask(__name__)
 
@@ -77,8 +76,8 @@ def processAQ():
     
     # ======set cookies======
     response = make_response(redirect(f'/results/{id}'))
-    response.set_cookie('iem', iem)
-    response.set_cookie('gekiyaba', str(gekiyaba(target)))
+    response.set_cookie('iem', iem, expires=datetime.datetime.now() + datetime.timedelta(days=30))
+    response.set_cookie('gekiyaba', str(gekiyaba(target)), expires=datetime.datetime.now() + datetime.timedelta(days=30))
 
     # ======return======
     return response
@@ -117,7 +116,7 @@ def resultsAQ(id, rawiem, iem, target, algo, processed, filterCount, eqres, mode
     # ======if target is None..======
     if target == 'None' or target == '':
         response = make_response(redirect('/'))
-        response.set_cookie('iem', iem)
+        response.set_cookie('iem', iem, expires=datetime.datetime.now() + datetime.timedelta(days=30))
         return response
     
     # ======gekiyaba !!======
@@ -239,7 +238,7 @@ def processLO():
     # ======if target is None..======
     if EQ.iem == 'None':
         response = make_response(redirect('/'))
-        response.set_cookie('iem',EQ.iem)
+        response.set_cookie('iem',EQ.iem, expires=datetime.datetime.now() + datetime.timedelta(days=30))
         return response
     
     # ======check if gekiyaba mode !!======
@@ -257,8 +256,8 @@ def processLO():
 
     # =====setting cookies========
     response = make_response(render_template('lochbaum.html', iemLoch=iemLoch, targetLoch=targetLoch, filterCount=EQ.filterCount, id=id))
-    response.set_cookie('iem', EQ.iem)
-    response.set_cookie('gekiyaba', str(EQ.gekiyaba))
+    response.set_cookie('iem', EQ.iem, expires=datetime.datetime.now() + datetime.timedelta(days=30))
+    response.set_cookie('gekiyaba', str(EQ.gekiyaba), expires=datetime.datetime.now() + datetime.timedelta(days=30))
 
     # ======return======
     return response
