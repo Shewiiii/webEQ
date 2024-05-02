@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, send_file, redirect
+from flask import Flask, render_template, request, send_file, redirect, make_response
 from app.getFRoT import getFRoTDict
 from app.computeFilters import getNewGain
 from app.dynamicAutoEQ import autoEQ
@@ -23,7 +23,7 @@ targetList = list(getFRoTDict('targets').keys())
 FRList = list(FRDict.keys())
 
 
-def gekiyaba(target):
+def gekiyaba(target: str):
     return not target in targetList
 
 
@@ -41,16 +41,32 @@ class EQ():
     gekiyaba = False
 
 
+
 @app.route('/', methods=['GET', 'POST'])
 def index():
+    
+    # ======read cookies======
+    seliem = request.cookies.get('iem')
+    gekiyaba = request.cookies.get('gekiyaba')
+    if seliem == None and gekiyaba == None:
+        seliem = ''
+        gekiyaba == 'False'
+    print("selected iem:", seliem)
+    print("gekiyaba:", gekiyaba)
+
+    response = make_response(render_template('index.html', FRList=FRList, targetList=targetList, result=None, id=id, seliem=seliem, gekiyaba=gekiyaba))
+    # ======return======
+    return response
+
+
+@app.route('/processAQ', methods=['GET', 'POST'])
+def processAQ():
     id = get_free_id()
-    return render_template('index.html', FRList=FRList, targetList=targetList, result=None, id=id)
 
-
-@app.route('/processAQ/<id>', methods=['GET', 'POST'])
-def processAQ(id):
     # ======put data in the database======
     iem = str(request.form.get('iem'))
+    if iem == '':
+        return redirect('/')
     rawiem = FRDict[iem]
     target = str(request.form.get('target'))
     algo = 'default'
@@ -58,9 +74,14 @@ def processAQ(id):
     mode = str(request.form.get('mode'))
     eqres = str(request.form.get('EQres'))  # basically 'yes', or 'no'
     log(rawiem, iem, target, algo, filterCount, eqres, mode)
+    
+    # ======set cookies======
+    response = make_response(redirect(f'/results/{id}'))
+    response.set_cookie('iem', iem)
+    response.set_cookie('gekiyaba', str(gekiyaba(target)))
 
     # ======return======
-    return redirect(f'/results/{id}')
+    return response
 
 
 @app.route('/saveChart', methods=['POST'])
@@ -93,10 +114,17 @@ def results(id):
 
 
 def resultsAQ(id, rawiem, iem, target, algo, processed, filterCount, eqres, mode):
+    # ======if target is None..======
+    if target == 'None' or target == '':
+        response = make_response(redirect('/'))
+        response.set_cookie('iem', iem)
+        return response
+    
+    # ======gekiyaba !!======
     gekiyabaa = gekiyaba(target)
     if gekiyabaa:
         #show raw iem name if gekiyaba mode
-        target = rawiem
+        target = FRDict[target]
 
     # ======settings======
     if eqres == 'yes':
@@ -196,16 +224,28 @@ def parametric(id):
     return send_file(path, as_attachment=True)
 
 
-@app.route('/lochbaum/<id>', methods=['GET', 'POST'])
-def lochbaum(id):
+@app.route('/processLO', methods=['GET', 'POST'])
+def processLO():
+
+    id = get_free_id()
 
     # ======store target an IEM from form======
     EQ.iem = str(request.form.get('iem'))
+    if EQ.iem == '':
+        return redirect('/')
     EQ.rawiem = FRDict[EQ.iem]
     EQ.target = str(request.form.get('target'))
+
+    # ======if target is None..======
+    if EQ.iem == 'None':
+        response = make_response(redirect('/'))
+        response.set_cookie('iem',EQ.iem)
+        return response
+    
+    # ======check if gekiyaba mode !!======
     EQ.gekiyaba = gekiyaba(EQ.target)
+
     if EQ.gekiyaba:
-        # check if gekiyaba mode !!!
         EQ.target = FRDict[EQ.target]
     print('choix:', EQ.iem, EQ.target)
 
@@ -215,8 +255,13 @@ def lochbaum(id):
     EQ.frequencies, EQ.gains, Tgains, iemLoch, targetLoch = getLochbaum(
         EQ.rawiem, EQ.target, EQ.gekiyaba)
 
+    # =====setting cookies========
+    response = make_response(render_template('lochbaum.html', iemLoch=iemLoch, targetLoch=targetLoch, filterCount=EQ.filterCount, id=id))
+    response.set_cookie('iem', EQ.iem)
+    response.set_cookie('gekiyaba', str(EQ.gekiyaba))
+
     # ======return======
-    return render_template('lochbaum.html', iemLoch=iemLoch, targetLoch=targetLoch, filterCount=EQ.filterCount, id=id)
+    return response
 
 @app.route('/process-data', methods=['POST'])
 #FOR LOCHBAUM OBV
@@ -238,6 +283,7 @@ def process_data():
     log(FRDict[EQ.iem], EQ.iem, EQ.target, 'lochbaum',
         EQ.filterCount, 'no', '', results=EQ.results)
     # ======return======
+
     return redirect("/")
 
 

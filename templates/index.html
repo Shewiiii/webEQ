@@ -11,19 +11,7 @@
 {% endblock %}
 
 {% block body%}
-<script>
-    function gekiyaba() {
-        document.getElementsByName('secretIem')[0].style.display = 'block';
-        document.getElementsByName('target')[0].style.display = 'none';
-        document.getElementsByName('target')[0].setAttribute("name", "a");
-        document.getElementsByName('secretIem')[0].setAttribute("name", "target");
-        document.getElementsByName('a')[0].setAttribute("name", "secretIem");
-    }
 
-    function listener() {
-        document.getElementById('listener').style.display = 'block'
-    }
-</script>
 {% if result == None %}
 <div class="tout">
     <div id="presentation" class="maindivs">
@@ -97,7 +85,8 @@
 <div class="maindivs EQdiv">
     <h3>- Try it ! -</h3>
     <form id="EQform" method="POST" action="{{ url_for('processAQ',id=id) }}">
-        <input class="searchDevice" name="iem" list="iem" type="text" name="search" placeholder="Choose your device">
+        <input class="searchDevice" name="iem" list="iem" type="text" name="search" placeholder="Choose your device"
+            value="{{ seliem }}">
         <datalist id="iem">
             {% for iem in FRList %}
             <option> {{ iem }} </option>
@@ -172,7 +161,7 @@
         <p><strong>5128 DF</strong>: Neutral for Headphones</p>
         <h5>- IEMs or TWS -</h5>
         <p><strong>SoundGuys Target</strong>: Nice balance between neutral and fun (recommended)</p>
-        <p><strong>Shewi Target</strong>: U-Shaped Target focused on technicalities and immersiveness. My go-to sound
+        <p><strong>Shewi Target OG</strong>: U-Shaped Target focused on technicalities and immersiveness. My go-to sound
             profile. I've tried to mix the midrange of the U6t with the bass and the treble of the Storm. Note that you
             will have to adjust the EQ manually for better results.
         </p>
@@ -258,7 +247,7 @@
             <strong>know something about</strong> is in my opinion the obvious choice and will lead to much, much better
             results than SoundID. And guess what? <strong>All the frequency responses measured and the EQ profiles
                 created by autoEQ and
-                suggested here dont't cost you a cent</strong>. You just have to use them with whatever software present
+                suggested here don't cost you a cent</strong>. You just have to use them with whatever software present
             on
             the Results tab (Wavelet and Equalizer APO are free softwares).
         </p>
@@ -296,7 +285,34 @@
 <p style="text-align: center;color: var(--secondary3);font-family: Segoe UI Bold;font-weight: bold;">
     かえるぴょこぴょこみぴょこぴょこ
     (/・ω・)/</p>
+
+
+
 <script>
+    function gekiyaba() {
+        document.getElementsByName('secretIem')[0].style.display = 'block';
+        document.getElementsByName('target')[0].style.display = 'none';
+        document.getElementsByName('target')[0].setAttribute("name", "a");
+        document.getElementsByName('secretIem')[0].setAttribute("name", "target");
+        document.getElementsByName('a')[0].setAttribute("name", "secretIem");
+    }
+</script>
+
+{% if result == None %}
+<script>
+    let gekiyabaa = {{ gekiyaba | tojson }};
+    console.log(gekiyabaa)
+    if (gekiyabaa == 'True') {
+        gekiyaba()
+    }
+</script>
+{% endif %}
+
+<script>
+    function listener() {
+        document.getElementById('listener').style.display = 'block'
+    }
+
     var algoSelect = document.getElementsByName('algorithm')[0]
     let algorithm = algoSelect.value
 
@@ -313,7 +329,7 @@
         modeSelect.value = 'standard';
         eqresSelect.value = 'yes';
         goButton.type = ''
-        EQform.action = '/lochbaum/{{ id }}'
+        EQform.action = '/processLO'
         eqWarningAQ.style.display = 'none'
         eqWarningLO.style.display = 'block'
     }
