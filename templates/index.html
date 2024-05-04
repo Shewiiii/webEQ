@@ -168,7 +168,7 @@
         <p><strong>Shewi Target</strong>: More or less the same but with a more elevated lower-treble. Might work for
             more people but it sounds a bit too shouty for me</p>
         <p><strong>JM-1</strong>: Neutral for IEMs</p>
-        <p><strong>Harman Beta (2024)</strong>: If you want a sound similar to AutoEQ but more precise</p>
+        <p><strong>Harman Beta (2024)</strong>: If you are a Harman guy</p>
         <h5>- Settings -</h5>
         <p><strong>Tilt</strong>: The more the tilt is important, the more it will sound 'dark'. If you prefer a
             brighter sound, choose
@@ -229,47 +229,90 @@
         <p>
             But please note that <strong>if your device is not available with B&K 5128 or 4620 measurements, the EQ will
                 probably
-                be inaccurate, especially for in-ear devices</strong>, because of the inaccurate acoustic input
-            impedance
-            other
-            measurement rigs have.
+                be inaccurate, especially for in-ear devices</strong>, because of the inaccurate <a class="link"
+                href="https://en.wikipedia.org/wiki/Acoustic_impedance" target="_blank">acoustic input
+                impedance</a> other measurement rigs have.
         </p>
-        <h4>PLEASE don't pay for SoundID/Sonarworks for headphones, it's just eye candy.</h4>
-        <p>I have some problems with that software when it comes to headphones. First,
-            it's paid. Second, you don't know
-            anything about their methodology of EQing. You don't know the rig they are using, you don't (explicitly)
-            know the target they are using,
-            NOTHING. What they are calling flat sound is based on what? on private research, and I refuse to pay for
-            something you know anything about and that you can get for free.
-        <p>I really think what I'm saying, it's not just to tell you "oh wow my website is amazing". EQing
-            using B&K
-            measurements combined with a target you choose and you
-            <strong>know something about</strong> is in my opinion the obvious choice and will lead to much, much better
-            results than SoundID. And guess what? <strong>All the frequency responses measured and the EQ profiles
-                created by autoEQ and
-                suggested here don't cost you a cent</strong>. You just have to use them with whatever software present
-            on
-            the Results tab (Wavelet and Equalizer APO are free softwares).
-        </p>
-        <p>
-            You want to tweak you target more? No probs ! Download a frequency response file in <a class="link"
-                href="https://github.com/Shewiiii/webEQ/tree/main/frequency_responses" target="_blank">my repo</a>,
-            import it in <a class="link"
-                href="https://listener800.github.io/5128?share=Custom_Tilt&bass=0&tilt=-1&treble=0&ear=0"
-                target="_blank">Listener's graph tool</a> and autoEQ from here !
-        </p>
-        <p>
-            If you REALLY want something similar to
-            Sonarworks, just use the Harman OE 2015 target on autoEQ with Equalizer APO or Wavelet.</p>
         <h4>Why I'm doing this</h4>
         <p>Because I'm using it personally and because it's fun to do @w@</p>
         <p>My motivation was to make my own "AutoEQ" website, but more accurate (since every EQ generated are based on
             5128 measurements) and with a look that suits me better !</p>
-        <h4>The biggest problem with the audio market: it is full of bullshit, because consumers like this</h4>
+        <h4>Specs of the EQ</h4>
+        <p>I'm trying to EQ up to 20khz, since the 5128 is accurate enough to allow EQing the full audible
+            range.<br><strong>However</strong>, you should note that all our ears are different, thus the frequency
+            response
+            you will actually hear will be significantly different from the one measured on the 5128. That's why you
+            HAVE to
+            EQ by ear as well if you think something is wrong.</strong></p>
+        <p>
+            On headphones especially, frequency response changes a lot depending on position. This is something you
+            should take into consideration when EQing but also in general when you look at a frequency response graph.
+        </p>
+    </div>
+</div>
+<div style="padding-top: 50px;"></div>
+<div class="maindivs">
+    <h3>- Some takes I have about audio -</h3>
+    <div style="text-align: left;">
+        <h3>The 711 problem</h3>
+
+        <p>I think it is not controversial to say that the 711 coupler has been the standard for decades at this point,
+            and for a good reason: it is easy to use, affordable and you can actually get relevant data from it. But its
+            strength is also its weakness: it just doesn't accurately simulate human's hearing. If we are aware of its
+            limitations, it becomes less of a problem, but unfortunately, this is not the case for the vast majority of
+            people. This is just a hypothesis, but I think it's this lack of knowledge that has caused many
+            misconceptions and a lack of confidence in IEMs measurements by the mass. Let's see some concrete cases.
+        </p>
+        <h5>People often try to find subjective explanations for what they're hearing, because a certain phenomenon
+            doesn't show up on
+            the graph</h5>
+        <p>Let's take the most obvious example: "BA bass". This is a term used when a BA does not produce a satisfying
+            bass response, when it lacks of body so to speak. When an IEM has "BA bass", that phenomenon doesn't show up
+            on a 711 coupler graph, even though it is a real thing !</p>
+        <p>The catch here is that a BA driver has a particularly high <a class="link"
+                href="https://en.wikipedia.org/wiki/Acoustic_impedance" target="_blank">acoustic output impedance</a> by
+            design (compared to a DD, for
+            example). Combined with the non-human acoustic input impedance the 711 coupler has, this results in
+            considerable inaccuracies.</p>
+        <p>with measurement rigs that have an acoustic impedance closer to that of a real human like the B&K 5128, this
+            phenomenon
+            is actually visible in the graph. </p>
+        <div class="illust">
+            <img class='targetsimg' src="../static/img/erx_comparaison.png">
+            <p>Extreme case: a single BA IEM. It results in an extremely inaccurate measurement on the 711 coupler
+                (Red), compared to the B&K 5128 (Cyan). Source: Listener, Super Review.</p>
+        </div>
+
+        <h5>More generally, the 711 coupler is just not accurate enough.</h5>
+        <p>That inaccurate acoustic impedance is also causing other problems, such as an overestimation of the lower
+            midrange, and an underestimation of the region around 1.5khz.</p>
+        <div class="illust">
+            <img class='targetsimg' src="../static/img/zero_red_comparaison.png">
+            <p>The Truthear x Crinacle Zero Red on the 711 (Yellow) vs. on the 5128 (Pink).</p>
+        </div>
+        <p>My point is, most people don't know about the limitations of the 711, and don't know that by looking at more
+            measurements taken with the 5128, they could actually get a considerably more accurate idea of the sound of
+            the IEM. The need to find vague subjective descriptions of the sound, such as "technicalities", is then less
+            necessary, as more information can now be drawn from the graphs. But 2 problems are remaining, which is not
+            directly related to the 711.</p>
+        <h5>First, all our ears are different.</h5>
+        <p>The rig can be as precise as you like, those ears aren't yours ! The actual sound that will come to your
+            eardrum will be very different from the 5128, because of the difference in <a class="link"
+                href="https://en.wikipedia.org/wiki/Head-related_transfer_function" target="_blank">HRTF</a>.</p>
+        <h5>Second, without subjective impression, we need to learn how to draw relevant informations from the graph.
+        </h5>
+        <p>It may sound silly, but it is not that easy to read a graph and deduce subjective impressions from it. But on
+            the other hand, subjective descriptions are pretty vague and the characteristics described are specific to
+            each
+            individual: everyone has their own definition of "details", "imaging" or "soundstage". Subjective
+            impressions
+            are therefore important, but need to be taken with a grain of salt.</p>
+        <div style="padding-top: 50px;"></div>
+        <h3>The biggest problem with the audio market: it is full of bullshit, because consumers like this</h3>
         <p>I'm often browsing audio forums or discord servers, and I'm sometimes blown away by what I can read. Let's
             take some examples.</p>
         <h5>Brands often boast about their driver configuration and "amazing" crosstalk.</h5>
-        <p>The Truthear Zero:blue is "using a subwoofer for the bass" which is LITERALLY just a DD driver, but you
+        <p>The Truthear Zero:blue is "using a subwoofer for the bass" which is LITERALLY just a DD, but you
             know..marketing.
             The Monarch Mk2 is using 2 electrostatic drivers for the treble. The result ? It changes the frequency
             response in a different way from a BA or a DD, full stop. The 64audio u18t is using 18 BAs to achieve their
@@ -316,17 +359,37 @@
         <p>One last point: I have to admit that perfectly simulating the sound of a "high-end" iem with a cheap iem is
             very complicated, but you can get so close with a bit of EQ that these "high end" IEMs become much
             less interesting.</p>
-        <h4>Specs of the EQ</h4>
-        <p>I'm trying to EQ up to 20khz, since the 5128 is accurate enough to allow EQing the full audible
-            range.<br><strong>However</strong>, you should note that all our ears are different, thus the frequency
-            response
-            you will actually hear will be significantly different from the one measured on the 5128. That's why you
-            HAVE to
-            EQ by ear as well if you think something is wrong.</strong></p>
-        <p>
-            On headphones especially, frequency response changes a lot depending on position. This is something you
-            should take into consideration when EQing but also in general when you look at a frequency response graph.
+
+        <div style="padding-top: 50px;"></div>
+
+        <h4>PLEASE don't pay for SoundID/Sonarworks for headphones, it's just eye candy.</h4>
+        <p>I have some problems with that software when it comes to headphones. First,
+            it's paid. Second, you don't know
+            anything about their methodology of EQing. You don't know the rig they are using, you don't (explicitly)
+            know the target they are using,
+            NOTHING. What they are calling flat sound is based on what? on private research, and I refuse to pay for
+            something you know anything about and that you can get for free.
+        <p>I really think what I'm saying, it's not just to tell you "oh wow my website is amazing". EQing
+            using B&K
+            measurements combined with a target you choose and you
+            <strong>know something about</strong> is in my opinion the obvious choice and will lead to much, much better
+            results than SoundID. And guess what? <strong>All the frequency responses measured and the EQ profiles
+                created by autoEQ and
+                suggested here don't cost you a cent</strong>. You just have to use them with whatever software present
+            on
+            the Results tab (Wavelet and Equalizer APO are free softwares).
         </p>
+        <p>
+            You want to tweak you target more? No probs ! Download a frequency response file in <a class="link"
+                href="https://github.com/Shewiiii/webEQ/tree/main/frequency_responses" target="_blank">my repo</a>,
+            import it in <a class="link"
+                href="https://listener800.github.io/5128?share=Custom_Tilt&bass=0&tilt=-1&treble=0&ear=0"
+                target="_blank">Listener's graph tool</a> and autoEQ from here !
+        </p>
+        <p>
+            If you REALLY want something similar to
+            Sonarworks, just use the Harman OE 2015 target on autoEQ with Equalizer APO or Wavelet.</p>
+
     </div>
 </div>
 <div style="position:absolute;left:-9999px;top:-9999px;width: 1280px;height: 720px;">

@@ -375,3 +375,8 @@ textarea {
   width:1280px !important;
   height:720px !important;
 }
+
+.illust {
+  text-align: center;
+  font-size: 80%;
+}
