@@ -21,9 +21,14 @@ def createParaEQFile(iem: str, target: str, restults: list):
 
     string = ''
     i = 0
+    preamp = 0
     for para in restults:
         i += 1
         string += f"Filter {i}: ON {para['type']} Fc {para['freq']} Hz Gain {para['gain']} dB Q {para['q']}\n"
+        #get the highest amplitude to set the preamp value:
+        if preamp < para['gain']:
+            preamp = para['gain']
+    string = f'Preamp: {preamp} dB\n' + string
     open(filePath, 'w').write(string)
 
 
