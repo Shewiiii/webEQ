@@ -18,6 +18,7 @@ class DB:
             database='cards')
 
     def query(self, sql):
+        print(sql)
         try:
             cursor = self.conn.cursor(buffered=True)
         except:
@@ -31,7 +32,7 @@ class DB:
 db = DB()
 
 
-def get_all_ids(table='webEQ') -> list:
+def get_all_ids(table=Constants.table) -> list:
     ids = []
     cursor = db.query(f'SELECT * FROM {table};')
     result = cursor.fetchall()
@@ -55,7 +56,6 @@ def log(rawiem: str, iem: str, target: str, algo: str, filtercount: str, eqres: 
     now = datetime.now()
     processed = now.strftime("%Y-%m-%d %H:%M:%S")
     id = get_free_id()
-    print(f'INSERT INTO {table} VALUES ({id},"{rawiem}","{iem}","{target}","{algo}","{processed}","{filtercount}","{eqres}","{mode}","{results}");')
     db.query(
         f'INSERT INTO {table} VALUES ({id},"{rawiem}","{iem}","{target}","{algo}","{processed}","{filtercount}","{eqres}","{mode}","{results}");')
     return id
