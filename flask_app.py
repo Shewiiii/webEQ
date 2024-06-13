@@ -20,6 +20,7 @@ FRDict = getFRoTDict('frequency_responses')
 # dictionnaire avec en clé le model et en valeur le nom du fichier brut
 targetList = list(getFRoTDict('targets').keys())
 FRList = list(FRDict.keys())
+rawFRList = list(FRDict.values())
 
 
 def gekiyaba(target: str):
@@ -40,20 +41,29 @@ class EQ():
     gekiyaba = False
 
 
-
 @app.route('/', methods=['GET', 'POST'])
 def index():
-    
+
     # ======read cookies======
     seliem = request.cookies.get('iem')
     gekiyaba = request.cookies.get('gekiyaba')
     if seliem == None and gekiyaba == None:
         seliem = ''
-        gekiyaba == 'False'
+        gekiyaba = 'False'
     print("selected iem:", seliem)
     print("gekiyaba:", gekiyaba)
 
-    response = make_response(render_template('index.html', FRList=FRList, targetList=targetList, result=None, id=id, seliem=seliem, gekiyaba=gekiyaba))
+    response = make_response(
+        render_template(
+            'index.html',
+            FRList=FRList,
+            targetList=targetList,
+            result=None,
+            seliem=seliem,
+            gekiyaba=gekiyaba,
+            rawFRList=rawFRList
+        )
+    )
     # ======return======
     return response
 
@@ -72,12 +82,29 @@ def processAQ():
     filterCount = int(request.form.get('filterCount'))
     mode = str(request.form.get('mode'))
     eqres = str(request.form.get('EQres'))  # basically 'yes', or 'no'
+
+    # ======gekiyaba!======
+    gekiyabaa = gekiyaba(target)
+    if gekiyabaa:
+        target = FRDict[target]
+
+    # ======Store in db======
     log(rawiem, iem, target, algo, filterCount, eqres, mode)
-    
+
     # ======set cookies======
-    response = make_response(redirect(f'/results/{id}'))
-    response.set_cookie('iem', iem, expires=datetime.datetime.now() + datetime.timedelta(days=30))
-    response.set_cookie('gekiyaba', str(gekiyaba(target)), expires=datetime.datetime.now() + datetime.timedelta(days=30))
+    response = make_response(
+        redirect(f'/results/{id}')
+    )
+    response.set_cookie(
+        'iem',
+        iem,
+        expires=datetime.datetime.now() + datetime.timedelta(days=30)
+    )
+    response.set_cookie(
+        'gekiyaba',
+        str(gekiyabaa),
+        expires=datetime.datetime.now() + datetime.timedelta(days=30)
+    )
 
     # ======return======
     return response
@@ -88,7 +115,7 @@ def saveChart():
     data = request.json['data']
     imgData = data[0]
     id = data[1]
-    createChartImage(imgData,id)
+    createChartImage(imgData, id)
     return redirect("/")
 
 
@@ -103,7 +130,16 @@ def results(id):
     entity = getEntity(id)
 
     # ======get all data======
-    rawiem, iem, target, algo, processed, filterCount, eqres, mode, results = entity[1:]
+    (rawiem,
+     iem,
+     target,
+     algo,
+     processed,
+     filterCount,
+     eqres,
+     mode,
+     results
+     ) = entity[1:]
     if algo == 'default':
         return resultsAQ(id, rawiem, iem, target, algo, processed, filterCount, eqres, mode)
     elif algo == 'lochbaum':
@@ -112,18 +148,29 @@ def results(id):
         return redirect('/')
 
 
-def resultsAQ(id, rawiem, iem, target, algo, processed, filterCount, eqres, mode):
+def resultsAQ(
+    id,
+    rawiem,
+    iem,
+    target,
+    algo,
+    processed,
+    filterCount,
+    eqres,
+    mode
+):
     # ======if target is None..======
     if target == 'None' or target == '':
         response = make_response(redirect('/'))
-        response.set_cookie('iem', iem, expires=datetime.datetime.now() + datetime.timedelta(days=30))
+        response.set_cookie(
+            'iem',
+            iem,
+            expires=datetime.datetime.now() + datetime.timedelta(days=30)
+        )
         return response
-    
+
     # ======gekiyaba !!======
     gekiyabaa = gekiyaba(target)
-    if gekiyabaa:
-        #show raw iem name if gekiyaba mode
-        target = FRDict[target]
 
     # ======settings======
     if eqres == 'yes':
@@ -142,63 +189,86 @@ def resultsAQ(id, rawiem, iem, target, algo, processed, filterCount, eqres, mode
         filterTypes = ['PK'] * 9
 
     # ======autoEQ======
-    frequencies, \
-        gains, \
-        newGains, \
-        Tgains, \
-        results, \
-        IIR = autoEQ(iem,
-                     target,
-                     config,
-                     concha_interference,
-                     filterTypes,
-                     gekiyabaa)
+    (
+        frequencies,
+        gains,
+        newGains,
+        Tgains,
+        results,
+        IIR
+    ) = autoEQ(
+        iem,
+        target,
+        config,
+        concha_interference,
+        filterTypes,
+        gekiyabaa
+    )
 
     # ======return======
-    return render_template('index.html',
-                           FRList=FRList,
-                           targetList=targetList,
-                           result="aouiiii",
-                           results=results,
-                           iem=iem,
-                           target=target,
-                           iir=IIR,
-                           frequencies=frequencies,
-                           gains=gains,
-                           newGains=newGains,
-                           Tgains=Tgains,
-                           id=id,
-                           algo=algo,
-                           processed=processed
-                           )
+    return render_template(
+        'index.html',
+        FRList=FRList,
+        targetList=targetList,
+        result="aouiiii",
+        results=results,
+        iem=iem,
+        target=target,
+        iir=IIR,
+        frequencies=frequencies,
+        gains=gains,
+        newGains=newGains,
+        Tgains=Tgains,
+        id=id,
+        algo=algo,
+        processed=processed
+    )
 
-def resultsLO(id, rawiem, iem, target, algo, processed, results):
+
+def resultsLO(
+    id,
+    rawiem,
+    iem,
+    target,
+    algo,
+    processed,
+    results
+):
 
     # ======get all data======
-    results = json.loads(results.replace("'",'"'))
+    results = json.loads(results.replace("'", '"'))
     gekiyabaa = gekiyaba(target)
     IIR = paraToIIR(results)
-    frequencies, gains, Tgains, iemLoch, targetLoch = getLochbaum(
-        rawiem, target, gekiyabaa)
+    (frequencies,
+     gains,
+     Tgains,
+     _,
+     _
+     ) = getLochbaum(
+        rawiem,
+        target,
+        gekiyabaa
+    )
 
     newGains, deltaGains = getNewGain(frequencies, gains, results)
     # ======return======
-    return render_template('index.html',
-                           FRList=FRList,
-                           targetList=targetList,
-                           result="aouiiii",
-                           results=results,
-                           iem=iem,
-                           target=target,
-                           iir=IIR, 
-                           frequencies=frequencies, 
-                           gains=gains, 
-                           newGains=newGains, 
-                           Tgains=Tgains,
-                           id=id,
-                           algo=algo,
-                           processed=processed
-                           )
+    return render_template(
+        'index.html',
+        FRList=FRList,
+        targetList=targetList,
+        result="aouiiii",
+        results=results,
+        iem=iem,
+        target=target,
+        iir=IIR,
+        frequencies=frequencies,
+        gains=gains,
+        newGains=newGains,
+        Tgains=Tgains,
+        id=id,
+        algo=algo,
+        processed=processed
+    )
 
 
 @app.route('/wavelet/<id>')
@@ -238,9 +308,13 @@ def processLO():
     # ======if target is None..======
     if EQ.iem == 'None':
         response = make_response(redirect('/'))
-        response.set_cookie('iem',EQ.iem, expires=datetime.datetime.now() + datetime.timedelta(days=30))
+        response.set_cookie(
+            'iem',
+            EQ.iem,
+            expires=datetime.datetime.now() + datetime.timedelta(days=30)
+        )
         return response
-    
+
     # ======check if gekiyaba mode !!======
     EQ.gekiyaba = gekiyaba(EQ.target)
 
@@ -255,26 +329,46 @@ def processLO():
         EQ.rawiem, EQ.target, EQ.gekiyaba)
 
     # =====setting cookies========
-    response = make_response(render_template('lochbaum.html', iemLoch=iemLoch, targetLoch=targetLoch, filterCount=EQ.filterCount, id=id))
-    response.set_cookie('iem', EQ.iem, expires=datetime.datetime.now() + datetime.timedelta(days=30))
-    response.set_cookie('gekiyaba', str(EQ.gekiyaba), expires=datetime.datetime.now() + datetime.timedelta(days=30))
+    response = make_response(
+        render_template(
+            'lochbaum.html',
+            iemLoch=iemLoch,
+            targetLoch=targetLoch,
+            filterCount=EQ.filterCount,
+            id=id
+        )
+    )
+    response.set_cookie(
+        'iem',
+        EQ.iem,
+        expires=datetime.datetime.now() + datetime.timedelta(days=30)
+    )
+    response.set_cookie(
+        'gekiyaba',
+        str(EQ.gekiyaba),
+        expires=datetime.datetime.now() + datetime.timedelta(days=30)
+    )
 
     # ======return======
     return response
 
+
 @app.route('/process-data', methods=['POST'])
-#FOR LOCHBAUM OBV
+# FOR LOCHBAUM OBV
 def process_data():
     EQ.results = request.json['data']
     EQ.newGains, EQ.deltaGains = getNewGain(
         EQ.frequencies, EQ.gains, EQ.results)
 
-
     # ======Create files======
     createParaEQFile(EQ.iem, EQ.target, EQ.results)
     createPAFile(EQ.iem, EQ.target, EQ.results)
     iemAQ = FrequencyResponse(
-        name="temp", frequency=EQ.frequencies, raw=EQ.gains, equalization=EQ.deltaGains)
+        name="temp",
+        frequency=EQ.frequencies,
+        raw=EQ.gains,
+        equalization=EQ.deltaGains
+    )
     # to create wavelet file
     createWaveletFile(EQ.iem, EQ.target, iemAQ)
 
@@ -284,7 +378,6 @@ def process_data():
     # ======return======
 
     return redirect("/")
-
 
 
 @app.route('/moondrop', methods=['GET', 'POST'])
@@ -327,8 +420,11 @@ def moondrop():
         i = 0
         for filt in peqs:
             i += 1
-            string += f'Filter {i}: ON PK Fc {int(filt.fc)} Hz Gain {round(filt.gain,1)} dB Q {round(filt.q,1)}\n'
-        path = pathlib.Path(__file__).parents[0] / f'generated_files/ {f.filename}'
+            string += (f'Filter {i}: ON PK Fc {int(filt.fc)} Hz Gain '
+                       f'{round(filt.gain,1)} dB Q {round(filt.q,1)}\n')
+        path = pathlib.Path(
+            __file__
+        ).parents[0] / f'generated_files/ {f.filename}'
         open(path, 'w').write(string)
         return send_file(path, as_attachment=True)
 
@@ -341,12 +437,15 @@ def iir():
     string = ''
     if request.method == 'POST':
         f = request.files['file']
-        path = pathlib.Path(__file__).parents[0] / f'generated_files/ {f.filename}'
+        path = pathlib.Path(
+            __file__
+        ).parents[0] / f'generated_files/ {f.filename}'
         f.save(path)
         results = getParaEQ2(path)
         string = paraToIIR(results)
         result = 'aouiiiiii'
     return render_template('iir.html', result=result, string=string)
+
 
 if __name__ == "__main__":
     app.run(debug=True)

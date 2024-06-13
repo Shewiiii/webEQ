@@ -7,7 +7,6 @@ def getFRoTDict(relativePath: str) -> dict:
     templist = listdir(path)
     templist.sort()
     dico = {}
-    finalist = []
     for iem in templist:
         key = iem.replace('.txt', '').replace('(AVG)', '').replace('(L)', '').replace('(R)', '')
         if key[-1] == ' ':

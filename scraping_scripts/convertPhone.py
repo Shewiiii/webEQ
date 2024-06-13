@@ -11,7 +11,7 @@ def convert_phone(
     delta: from 5128 to 711
     -delta: from 711 to 5128
     '''
-    assert len(phone) == 480, "."
+    assert len(phone) == 480, "Phone must have a length of 480."
     if type(phone) == list:
         np.array(phone)
 
