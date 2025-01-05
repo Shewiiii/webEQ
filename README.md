@@ -1,3 +1,6 @@
+**I decided to pause that project for now, and I don't know if I will continue to maintain it in the future. I don't completely agree anymore on what I've done or written on the website, and I'm not motivated to update it.
+But if you still want to use it, I strongly recommend you using the default AutoEQ algorithm: an agressive EQ above 10Khz is completely pointless because of both HRTF and HpTF effects.**
+
 Simple website to auto EQ IEMs/TWS, in line with the new standards.  
 Website: https://webEQ.pythonanywhere.com
 
